@@ -30,7 +30,7 @@ app.post("/register", (req, res) => {
                 res.send(err);
             }
 
-            if (result.length == 0) {
+            if (!result?.length) {
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
                     db.query(
                         "INSERT INTO TB_USUARIO (DS_NOME, DS_EMAIL, DS_SENHA) VALUES (?, ?, ?)",
