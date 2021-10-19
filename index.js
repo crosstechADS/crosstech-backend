@@ -62,7 +62,7 @@ app.post("/login", (req, res) => {
             if (err) {
                 res.send(err);
             }
-            if (result.length > 0) {
+            if (result?.length) {
                 bcrypt.compare(password, result[0].DS_SENHA,
                     (erro, result) => {
                         if (result) {
