@@ -27,10 +27,10 @@ app.post("/register", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+    return db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
-                res.send(err);
+                return res.send(err);
             }
 
             if (!result?.length) {
@@ -40,14 +40,14 @@ app.post("/register", (req, res) => {
                         [nome, email, hash],
                         (err, response) => {
                             if (err) {
-                                res.send(err);
+                                return res.send(err);
                             }
-                            res.send({ msg: "Cadastrado com sucesso!" });
+                            return res.send({ msg: "Cadastrado com sucesso!" });
                         });
                 })
 
             } else {
-                res.send({ msg: "Usuário já cadastrado." })
+                return res.send({ msg: "Usuário já cadastrado." })
             }
         });
 });
