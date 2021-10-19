@@ -58,6 +58,7 @@ app.post("/login", (req, res) => {
 
     db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
+            console.log(result)
             if (err) {
                 res.send(err);
             }
