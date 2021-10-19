@@ -4,13 +4,14 @@ const mysql = require("mysql");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
+require("dotenv-safe").config();
 
 const db = mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "k2s8c9j4",
-    database: "db_crosstech"
+
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 
 });
 
@@ -79,6 +80,6 @@ app.post("/login", (req, res) => {
     );
 });
 
-app.listen(3001, () => {
+app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
 });
