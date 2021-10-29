@@ -8,7 +8,7 @@ require("dotenv-safe").config();
 
 const db = mysql.createPool({
     // ssl: process.env.SSL,
-    port: process.env.MYSQLPORT,
+    //port: process.env.MYSQLPORT,
     connectionLimit: 1000,
     connectTimeout: 60 * 60 * 1000 * 60,
     acquireTimeout: 60 * 60 * 1000 * 60,
