@@ -59,7 +59,6 @@ app.post("/register", (req, res) => {
                         (err, response) => {
                             if (err) {
                                 res.status(401).send({ msg: "Body Incorreto"})
-                                //return res.send(err);
                             } else {
                                 return res.send({ msg: "Cadastrado com sucesso!" });
                             }
@@ -77,13 +76,26 @@ app.post("/home", verifyJWT, (req, res) => {
     return res.json({msg: "Token válido"});
 });
 
+app.get("/logout", (req, res) => {
+    res.send("Saindo");
+})
+
 app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
-
+    var id;
+    db.query("SELECT ID_USUARIO FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            if(err) {
+                res.send(err)
+            }
+            if(result?.length){
+                id = result[0].ID_USUARIO
+            }
+        }
+    )
     db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
-            var id = result[0].ID_USUARIO;
             console.log(result)
             if (err) {
                 res.send(err)
@@ -97,10 +109,10 @@ app.post("/login", (req, res) => {
                             //Segundo parâmetro passo o SECRET, código do servidor para criptografar e descriptografar.
                             //Terceiro parâmetro é referente ao tempo de expiração do token.
                             const token = jwt.sign({id}, process.env.SECRET, { expiresIn: 3000})
-                            return res.json({ msg: "Usuário logado com sucesso!", auth: true, token })
+                            res.send({ msg: "Usuário logado com sucesso!", auth: true, token })
                         }
                         else {
-                            res.status(401).end();
+                            res.status(401)
                             res.send({ msg: "Senha incorreta." })
                         }
 
