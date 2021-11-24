@@ -4,6 +4,7 @@ const mysql = require("mysql");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
 require("dotenv-safe").config();
 
 const db = mysql.createPool({
@@ -23,6 +24,21 @@ const db = mysql.createPool({
 app.use(express.json());
 app.use(cors());
 
+//Nessa função estamos criando a verificação do token recebido.
+function verifyJWT(req, res, next){
+    //Tipo de token passado no request
+    const token = req.headers['x-acess-token'];
+    //Erro caso o token seja inválido ou vencido
+    if(!token) return res.status(401).json({ auth: false, message: 'Token não fornecido.' })
+
+    jwt.verify(token, process.env.SECRET, function(err, decoded){
+        if(err) return res.status(500).json({auth: false, message: 'Falha na autenticação do Token.'});
+
+        //estando ok, salvando tudo no request para uso posterior
+        req.id = decoded.id;
+        next();
+    })
+}
 
 app.post("/register", (req, res) => {
     const nome = req.body.nome;
@@ -42,9 +58,11 @@ app.post("/register", (req, res) => {
                         [nome, email, hash],
                         (err, response) => {
                             if (err) {
-                                return res.send(err);
+                                res.status(401).send({ msg: "Body Incorreto"})
+                                //return res.send(err);
+                            } else {
+                                return res.send({ msg: "Cadastrado com sucesso!" });
                             }
-                            return res.send({ msg: "Cadastrado com sucesso!" });
                         });
                 })
 
@@ -54,23 +72,35 @@ app.post("/register", (req, res) => {
         });
 });
 
+//verifyJWT utilizado para validar se o token está correto!
+app.post("/home", verifyJWT, (req, res) => {
+    return res.json({msg: "Token válido"});
+});
+
 app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
     db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
+            var id = result[0].ID_USUARIO;
             console.log(result)
             if (err) {
-                res.send(err);
+                res.send(err)
             }
             if (result?.length) {
                 bcrypt.compare(password, result[0].DS_SENHA,
                     (erro, result) => {
                         if (result) {
-                            res.send({ msg: "Usuário logado com sucesso!" });
+                            //criação do JWT -
+                            //Primeiro parâmetro passo o ID do cliente para geração do token.
+                            //Segundo parâmetro passo o SECRET, código do servidor para criptografar e descriptografar.
+                            //Terceiro parâmetro é referente ao tempo de expiração do token.
+                            const token = jwt.sign({id}, process.env.SECRET, { expiresIn: 3000})
+                            return res.json({ msg: "Usuário logado com sucesso!", auth: true, token })
                         }
                         else {
+                            res.status(401).end();
                             res.send({ msg: "Senha incorreta." })
                         }
 
@@ -78,10 +108,9 @@ app.post("/login", (req, res) => {
 
             }
             else {
+                res.status(404)
                 res.send({ msg: "Usuário não encontrado." })
             }
-
-
         }
     );
 });
