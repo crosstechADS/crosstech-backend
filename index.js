@@ -24,22 +24,20 @@ const db = mysql.createPool({
 app.use(express.json());
 
 app.use((req, res, next) => {
-    /*res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", "https://upload-frontend-crosstech.herokuapp.com/login");
     res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
     res.setHeader("Access-Control-Allow-Headers", "*");
     app.use(cors());
-    next();*/
+    next();
 
-    var responseSettings = {
+    /*var responseSettings = {
         "AccessControlAllowOrigin": req.headers.origin,
         "AccessControlAllowHeaders": "Content-Type,X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5,  Date, X-Api-Version, X-File-Name",
         "AccessControlAllowMethods": "POST, GET, PUT, DELETE, OPTIONS",
         "AccessControlAllowCredentials": true
     };
 
-    /**
-     * Headers
-     */
+    //Headers
      console.log("Cheguei até o grupo de headers");
     res.header("Access-Control-Allow-Credentials", responseSettings.AccessControlAllowCredentials);
     res.header("Access-Control-Allow-Origin",  responseSettings.AccessControlAllowOrigin);
@@ -54,7 +52,7 @@ app.use((req, res, next) => {
     else {
         console.log("Passei aqui dentro do ELSE da linha 53");
         next();
-    }
+    }*/
 });
 
 //Nessa função estamos criando a verificação do token recebido.
