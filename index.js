@@ -24,10 +24,10 @@ const db = mysql.createPool({
 app.use(express.json());
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    app.use(cors());
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    //app.use(cors());
     next();
 });
 
@@ -89,9 +89,9 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    /*res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');*/
     const email = req.body.email;
     const password = req.body.password;
     var id;
