@@ -20,7 +20,7 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 
 });
-
+app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -32,14 +32,14 @@ app.use((req, res, next) => {
 })
 
 //Nessa função estamos criando a verificação do token recebido.
-function verifyJWT(req, res, next){
+function verifyJWT(req, res, next) {
     //Tipo de token passado no request
     const token = req.headers['x-acess-token'];
     //Erro caso o token seja inválido ou vencido
-    if(!token) return res.status(401).json({ auth: false, message: 'Token não fornecido.' })
+    if (!token) return res.status(401).json({ auth: false, message: 'Token não fornecido.' })
 
-    jwt.verify(token, process.env.SECRET, function(err, decoded){
-        if(err) return res.status(500).json({auth: false, message: 'Falha na autenticação do Token.'});
+    jwt.verify(token, process.env.SECRET, function (err, decoded) {
+        if (err) return res.status(500).json({ auth: false, message: 'Falha na autenticação do Token.' });
 
         //estando ok, salvando tudo no request para uso posterior
         req.id = decoded.id;
@@ -65,7 +65,7 @@ app.post("/register", (req, res) => {
                         [nome, email, hash],
                         (err, response) => {
                             if (err) {
-                                res.status(401).send({ msg: "Body Incorreto"})
+                                res.status(401).send({ msg: "Body Incorreto" })
                             } else {
                                 return res.send({ msg: "Cadastrado com sucesso!" });
                             }
@@ -80,7 +80,7 @@ app.post("/register", (req, res) => {
 
 //verifyJWT utilizado para validar se o token está correto!
 app.post("/home", verifyJWT, (req, res) => {
-    return res.json({msg: "Token válido"});
+    return res.json({ msg: "Token válido" });
 });
 
 app.post("/logout", (req, res) => {
@@ -94,10 +94,10 @@ app.post("/login", (req, res) => {
     var id;
     db.query("SELECT ID_USUARIO FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
-            if(err) {
+            if (err) {
                 res.send(err)
             }
-            if(result?.length){
+            if (result?.length) {
                 id = result[0].ID_USUARIO
             }
         }
@@ -116,7 +116,7 @@ app.post("/login", (req, res) => {
                             //Primeiro parâmetro passo o ID do cliente para geração do token.
                             //Segundo parâmetro passo o SECRET, código do servidor para criptografar e descriptografar.
                             //Terceiro parâmetro é referente ao tempo de expiração do token.
-                            const token = jwt.sign({id}, process.env.SECRET, { expiresIn: 3000})
+                            const token = jwt.sign({ id }, process.env.SECRET, { expiresIn: 3000 })
                             res.send({ msg: "Usuário logado com sucesso!", auth: true, token })
                         }
                         else {
