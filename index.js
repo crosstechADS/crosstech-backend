@@ -22,7 +22,13 @@ const db = mysql.createPool({
 });
 
 app.use(express.json());
-app.use(cors());
+
+app.use((req, res, next) => {
+
+    res.header("Access-Control-Allow-Origin", "*")
+    app.use(cors());
+    next();
+});
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next){
@@ -76,9 +82,10 @@ app.post("/home", verifyJWT, (req, res) => {
     return res.json({msg: "Token válido"});
 });
 
-app.get("/logout", (req, res) => {
-    res.send("Saindo");
-})
+app.post("/logout", (req, res) => {
+    res.send({ msg: "Saindo" })
+    res.end();
+});
 
 app.post("/login", (req, res) => {
     const email = req.body.email;
@@ -102,7 +109,7 @@ app.post("/login", (req, res) => {
             }
             if (result?.length) {
                 bcrypt.compare(password, result[0].DS_SENHA,
-                    (erro, result) => {
+                    (err, result) => {
                         if (result) {
                             //criação do JWT -
                             //Primeiro parâmetro passo o ID do cliente para geração do token.
