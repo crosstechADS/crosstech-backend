@@ -40,15 +40,19 @@ app.use((req, res, next) => {
     /**
      * Headers
      */
+     console.log("Cheguei até o grupo de headers");
     res.header("Access-Control-Allow-Credentials", responseSettings.AccessControlAllowCredentials);
     res.header("Access-Control-Allow-Origin",  responseSettings.AccessControlAllowOrigin);
     res.header("Access-Control-Allow-Headers", (req.headers['access-control-request-headers']) ? req.headers['access-control-request-headers'] : "x-requested-with");
     res.header("Access-Control-Allow-Methods", (req.headers['access-control-request-method']) ? req.headers['access-control-request-method'] : responseSettings.AccessControlAllowMethods);
+    console.log("Passei pelo grupo de headers");
 
     if ('OPTIONS' == req.method) {
+        console.log("Cai aqui");
         res.send(200);
     }
     else {
+        console.log("Passei aqui dentro do ELSE da linha 53");
         next();
     }
 });
