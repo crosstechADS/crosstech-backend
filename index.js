@@ -21,14 +21,14 @@ const db = mysql.createPool({
 
 });
 
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-var corsOptions = {
+/*var corsOptions = {
     origin: 'https://upload-frontend-crosstech.herokuapp.com', optionsSucessStatus: 200
 }
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));*/
 
 /*app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "https://upload-frontend-crosstech.herokuapp.com/login");
