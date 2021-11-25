@@ -1,7 +1,7 @@
-const express = require("express");
-const app = express();
+const express = require('express');
+const cors = require('cors');
+var app = express();
 const mysql = require("mysql");
-const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
@@ -22,8 +22,15 @@ const db = mysql.createPool({
 });
 
 app.use(express.json());
+app.use(cors());
 
-app.use((req, res, next) => {
+var corsOptions = {
+    origin: 'https://upload-frontend-crosstech.herokuapp.com', optionsSucessStatus: 200
+}
+
+app.use(cors(corsOptions));
+
+/*app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "https://upload-frontend-crosstech.herokuapp.com/login");
     res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
     res.setHeader("Access-Control-Allow-Headers", "*");
@@ -52,8 +59,8 @@ app.use((req, res, next) => {
     else {
         console.log("Passei aqui dentro do ELSE da linha 53");
         next();
-    }*/
-});
+    }
+});*/
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next){
