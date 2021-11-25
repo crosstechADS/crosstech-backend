@@ -21,41 +21,15 @@ const db = mysql.createPool({
 
 });
 
-app.use(cors());
 app.use(express.json());
 
-const allowedOrigins = [
-    'capacitor://localhost',
-    'ionic://localhost',
-    'http://localhost',
-    'http://localhost:8080',
-    'http://localhost:8100',
-    'http://localhost:3001',
-    '*',
-    'https://upload-frontend-crosstech.herokuapp.com/'
-  ];
-  
-  // Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
-  const corsOptions = {
-    origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Origin not allowed by CORS'));
-      }
-    }
-  }
-  
-  // Enable preflight requests for all routes
-  app.options('*', cors(corsOptions));
-  
-  app.get('/', cors(corsOptions), (req, res, next) => {
-    res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
-  })
-  
-  app.listen(3000, () => {
-    console.log('CORS-enabled web server listening on port 3000');
-  });
+app.use((req, res, next) => {
+    res.header("Acess-Control-Allow-Origin", "*");
+    res.header("Acess-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Request-Headers", "x-acess-token", "Content-Type");
+    app.use(cors());
+    next();
+})
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next){
