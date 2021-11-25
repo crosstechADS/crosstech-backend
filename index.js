@@ -89,6 +89,9 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', '*');
     const email = req.body.email;
     const password = req.body.password;
     var id;
