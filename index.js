@@ -24,43 +24,38 @@ const db = mysql.createPool({
 app.use(cors());
 app.use(express.json());
 
-/*var corsOptions = {
-    origin: 'https://upload-frontend-crosstech.herokuapp.com', optionsSucessStatus: 200
-}
-
-app.use(cors(corsOptions));*/
-
-/*app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "https://upload-frontend-crosstech.herokuapp.com/login");
-    res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "*");
-    app.use(cors());
-    next();
-
-    /*var responseSettings = {
-        "AccessControlAllowOrigin": req.headers.origin,
-        "AccessControlAllowHeaders": "Content-Type,X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5,  Date, X-Api-Version, X-File-Name",
-        "AccessControlAllowMethods": "POST, GET, PUT, DELETE, OPTIONS",
-        "AccessControlAllowCredentials": true
-    };
-
-    //Headers
-     console.log("Cheguei até o grupo de headers");
-    res.header("Access-Control-Allow-Credentials", responseSettings.AccessControlAllowCredentials);
-    res.header("Access-Control-Allow-Origin",  responseSettings.AccessControlAllowOrigin);
-    res.header("Access-Control-Allow-Headers", (req.headers['access-control-request-headers']) ? req.headers['access-control-request-headers'] : "x-requested-with");
-    res.header("Access-Control-Allow-Methods", (req.headers['access-control-request-method']) ? req.headers['access-control-request-method'] : responseSettings.AccessControlAllowMethods);
-    console.log("Passei pelo grupo de headers");
-
-    if ('OPTIONS' == req.method) {
-        console.log("Cai aqui");
-        res.send(200);
+const allowedOrigins = [
+    'capacitor://localhost',
+    'ionic://localhost',
+    'http://localhost',
+    'http://localhost:8080',
+    'http://localhost:8100',
+    'http://localhost:3001',
+    '*',
+    'https://upload-frontend-crosstech.herokuapp.com/'
+  ];
+  
+  // Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Origin not allowed by CORS'));
+      }
     }
-    else {
-        console.log("Passei aqui dentro do ELSE da linha 53");
-        next();
-    }
-});*/
+  }
+  
+  // Enable preflight requests for all routes
+  app.options('*', cors(corsOptions));
+  
+  app.get('/', cors(corsOptions), (req, res, next) => {
+    res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+  })
+  
+  app.listen(3000, () => {
+    console.log('CORS-enabled web server listening on port 3000');
+  });
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next){
@@ -120,9 +115,6 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    /*res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', '*');*/
     const email = req.body.email;
     const password = req.body.password;
     var id;
