@@ -24,7 +24,7 @@ const db = mysql.createPool({
 app.use(express.json());
 
 app.use((req, res, next) => {
-    res.header('Acess-Control-Allow-Origin', '*');
+    res.header('Acess-Control-Allow-Origin', 'https://upload-backend-crosstech.herokuapp.com, https://upload-frontend-crosstech.herokuapp.com');
     res.header('Acess-Control-Allow-Headers', 'Origin, X-Requested-With, content-Type, Accept, Authorization');
     res.header("Acess-Control-Allow-Methods", "GET,PUT,POST,DELETE");
     //app.use(cors());
