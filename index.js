@@ -44,6 +44,7 @@ app.post("/register", (req, res) => {
     const nome = req.body.nome;
     const email = req.body.email;
     const password = req.body.password;
+    const profile = req.body.profile;
 
     return db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
@@ -54,8 +55,8 @@ app.post("/register", (req, res) => {
             if (!result?.length) {
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
                     db.query(
-                        "INSERT INTO TB_USUARIO (DS_NOME, DS_EMAIL, DS_SENHA) VALUES (?, ?, ?)",
-                        [nome, email, hash],
+                        "INSERT INTO TB_USUARIOS (DS_NOME, DS_EMAIL, DS_SENHA, ID_TIPO_PERFIL) VALUES (?, ?, ?, ?)",
+                        [nome, email, hash, profile],
                         (err, response) => {
                             if (err) {
                                 res.status(401).send({ msg: "Body Incorreto" })
@@ -121,7 +122,7 @@ app.post("/login", (req, res) => {
 
             }
             else {
-                res.status(404)
+                //res.status(404)
                 res.send({ msg: "Usuário não encontrado." })
             }
         }
