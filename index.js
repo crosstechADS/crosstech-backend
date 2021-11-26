@@ -86,7 +86,7 @@ app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     var id;
-    db.query("SELECT ID_USUARIOS FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+    db.query("SELECT ID_USUARIO FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
                 res.send(err)
