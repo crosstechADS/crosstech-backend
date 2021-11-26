@@ -46,7 +46,7 @@ app.post("/register", (req, res) => {
     const password = req.body.password;
     const profile = req.body.profile;
 
-    return db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+    return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
                 return res.send(err);
