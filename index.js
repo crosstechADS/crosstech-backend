@@ -27,7 +27,7 @@ app.use(express.json());
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
     //Tipo de token passado no request
-    const token = req.headers['x-acess-token'];
+    const token = req.headers['x-access-token'];
     //Erro caso o token seja inválido ou vencido
     if (!token) return res.status(401).json({ auth: false, message: 'Token não fornecido.' })
 
@@ -82,6 +82,61 @@ app.post("/logout", (req, res) => {
     res.end();
 });
 
+app.post("/delete", (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    var id;
+
+    db.query("SELECT ID_USUARIO FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            if (err) {
+                res.send(err)
+            }
+            if (result?.length) {
+                id = result[0].ID_USUARIO
+            }
+        }
+    )
+
+    db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            console.log(result)
+            if (err) {
+                res.send(err)
+            }
+            if (result?.length) {
+                bcrypt.compare(password, result[0].DS_SENHA,
+                    (err, result) => {
+                        if (result) {
+                            db.query("DELETE FROM TB_USUARIO WHERE ID_USUARIO = ?", [id])
+                            res.status(200)
+                            res.send({ msg: "Usuário excluido com sucesso!" })
+                        }
+                        else {
+                            res.status(401)
+                            res.send({ msg: "Senha incorreta." })
+                        }
+                    });
+            }
+            else {
+                res.status(404)
+                res.send({ msg: "Usuário não encontrado." })
+            }
+        }
+    );
+});
+
+app.post("/calculoIMC", (req, res) => {
+    const peso = req.body.peso;
+    console.log(peso);
+    const altura = req.body.altura;
+    console.log(altura);
+    const imc = (peso / (altura * altura)).toFixed(2)
+    console.log(imc)
+    res.status(200);
+    res.json({ msg: imc });
+});
+
 app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -111,7 +166,7 @@ app.post("/login", (req, res) => {
                             //Segundo parâmetro passo o SECRET, código do servidor para criptografar e descriptografar.
                             //Terceiro parâmetro é referente ao tempo de expiração do token.
                             const token = jwt.sign({ id }, process.env.SECRET, { expiresIn: 3000 })
-                            res.send({ msg: "Usuário logado com sucesso!", auth: true, token })
+                            res.send({ msg: "Usuário logado com sucesso!", auth: true, token: token })
                         }
                         else {
                             res.status(401)
