@@ -5,6 +5,7 @@ const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
+const { response } = require('express');
 require("dotenv-safe").config();
 
 const db = mysql.createPool({
@@ -20,6 +21,7 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 
 });
+
 app.use(cors());
 app.use(express.json());
 
@@ -66,11 +68,60 @@ app.post("/register", (req, res) => {
                         });
                 })
 
+                //rabiscar aqui
+
             } else {
                 return res.send({ msg: "Usuário já cadastrado." })
             }
         });
 });
+
+app.post("/registerTbDadosUsuario", (req, res) => {
+    const email = req.body.email
+    const rua = req.body.rua;
+    const cpf = req.body.cpf;
+    const numeroLogradouro = req.body.numeroLogradouro;
+    const bairro = req.body.bairro;
+    const dataNascimento = req.body.dataNascimento;
+    const cep = req.body.cep;
+    const cidade = req.body.cidade;
+    const uf = req.body.uf;
+    var id;
+
+    db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            if (err) {
+                res.send(err)
+            }
+            if (result) {
+                id = result[0].ID_USUARIO
+            }
+        }
+    )
+
+    return db.query("SELECT * FROM TB_DADOS_USUARIO WHERE DS_CPF = ?", [cpf],
+        (err, result) => {
+            if (err) {
+                return res.send(err);
+            }
+
+            if (result) {
+                db.query("INSERT INTO TB_DADOS_USUARIO (DS_RUA, DS_CPF, DS_NUMERO_LOGRADOURO, DS_BAIRRO, DT_NASCIMENTO, DS_CEP, DS_CIDADE, DS_UF, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [rua, cpf, numeroLogradouro, bairro, dataNascimento, cep, cidade, uf, id],
+                    (err, response) => {
+                        if (err) {
+                            res.status(401).send({ msg: err })
+                        } else {
+                            return res.send({ msg: "Cadastrado com sucesso!" });
+                        }
+                    });
+            }
+            else {
+                return res.send({ msg: "Usuário já cadastrado." })
+            }
+        });
+});
+
 
 //verifyJWT utilizado para validar se o token está correto!
 app.post("/home", verifyJWT, (req, res) => {
@@ -87,7 +138,7 @@ app.post("/delete", (req, res) => {
     const password = req.body.password;
     var id;
 
-    db.query("SELECT ID_USUARIO FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+    db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
                 res.send(err)
@@ -98,7 +149,7 @@ app.post("/delete", (req, res) => {
         }
     )
 
-    db.query("SELECT * FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+    db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             console.log(result)
             if (err) {
@@ -124,8 +175,60 @@ app.post("/delete", (req, res) => {
             }
         }
     );
-});
+})
 
+app.post("/calculoIMC", (req, res) => {
+    const peso = req.body.peso;
+    const altura = req.body.altura;
+    const imc = (peso / (altura * altura)).toFixed(2)
+    res.status(200);
+    res.json({ IMC: imc });
+})
+
+/*
+app.post("/login", (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    var id;
+    db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            if (err) {
+                res.send(err)
+            }
+            if (result?.length) {
+                id = result[0].ID_USUARIO
+            }
+        }
+    )
+
+    db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            console.log(result)
+            if (err) {
+                res.send(err)
+            }
+            if (result?.length) {
+                bcrypt.compare(password, result[0].DS_SENHA,
+                    (err, result) => {
+                        if (result) {
+                            db.query("DELETE FROM TB_USUARIOS WHERE ID_USUARIO = ?", [id])
+                            res.status(200)
+                            res.send({ msg: "Usuário excluido com sucesso!" })
+                        }
+                        else {
+                            res.status(401)
+                            res.send({ msg: "Senha incorreta." })
+                        }
+                    });
+            }
+            else {
+                res.status(404)
+                res.send({ msg: "Usuário não encontrado." })
+            }
+        }
+    );
+});
+*/
 app.post("/calculoIMC", (req, res) => {
     const peso = req.body.peso;
     console.log(peso);
@@ -141,7 +244,7 @@ app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     var id;
-    db.query("SELECT ID_USUARIO FROM TB_USUARIO WHERE DS_EMAIL = ?", [email],
+    db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
                 res.send(err)
