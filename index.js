@@ -133,6 +133,7 @@ app.post("/logout", (req, res) => {
     res.end();
 });
 
+
 app.post("/delete", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -286,6 +287,28 @@ app.post("/login", (req, res) => {
         }
     );
 });
+
+app.post("/exerciciosregister", (req, res) => {
+    const exercicio = req.body.exercicio;
+    const exercicioObs = req.body.exercicioObs;
+    const exercicioTipo = req.body.exercicioTipo;
+    return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO) VALUES (?,?,?,?)",
+        [exercicio, exercicioObs, null, exercicioTipo],
+        (err, response) => {
+            if (err) {
+                res.status(401).send({ msg: "Body Incorreto" })
+            }
+            else {
+                return res.send({ msg: "Cadastrado com sucesso!" });
+            }
+        }
+    )
+})
+
+
+
+
+
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
