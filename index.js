@@ -297,10 +297,19 @@ app.post("/exerciciosregister", (req, res) => {
         case 'aerobica':
             id_Tipo_Exercicio = 5;
             break;
+        case 'Aerobica':
+            id_Tipo_Exercicio = 5;
+            break;
         case 'funcional':
             id_Tipo_Exercicio = 15;
             break;
+        case 'Funcional':
+            id_Tipo_Exercicio = 15;
+            break;
         case 'pilates':
+            id_Tipo_Exercicio = 25;
+            break;
+        case 'Pilates':
             id_Tipo_Exercicio = 25;
             break;
     }
