@@ -50,7 +50,7 @@ function verifyJWT(req, res, next) {
 
 app.post("/treinoRegister", (req, res) => {
     const treino = req.body.treino;
-    const obsTreino = req.body.obsTreino;
+    const treinoObs = req.body.obsTreino;
     const email = req.body.email;
     var id;
     db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
@@ -59,7 +59,7 @@ app.post("/treinoRegister", (req, res) => {
                 res.send(err);
             } else {
                 id = result[0].ID_USUARIO;
-                db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, ID_USUARIO, DT_EXCLUSAO) VALUES (?, ?, ?, ?)", [treino, obsTreino, id, null],
+                db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, ID_USUARIO, DT_EXCLUSAO) VALUES (?, ?, ?, ?)", [treino, treinoObs, id, null],
                 (err, result) => {
                     if(err) {
                         res.send(err);
