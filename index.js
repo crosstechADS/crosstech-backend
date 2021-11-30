@@ -318,10 +318,11 @@ app.post("/exerciciosregister", (req, res) => {
         [exercicio, exercicioObs, null, id_Tipo_Exercicio],
         (err, response) => {
             if (err) {
-                res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
-                res.status(401).send({ msg: "Body Incorreto" })
+                //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
+                res.status(401).send({err})
             }
             else {
+                //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
                 return res.send({ msg: "Cadastrado com sucesso!" });
             }
         }
