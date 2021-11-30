@@ -292,9 +292,21 @@ app.post("/exerciciosregister", (req, res) => {
     const exercicio = req.body.exercicio;
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
+    var id;
+    if(exercicioTipo === 'Aerobica' || exercicioTipo === 'aerobica') {
+        id = 5;
+    }
+
+    if(exercicioTipo === 'Funcional' || exercicioTipo === 'funcional') {
+        id = 15;
+    }
+
+    if(exercicioTipo === 'Pilates' || exercicioTipo === 'pilates') {
+        id = 25;
+    }
 
     return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO) VALUES (?,?,?,?)",
-        [exercicio, exercicioObs, null, exercicioTipo],
+        [exercicio, exercicioObs, null, id],
         (err, response) => {
             if (err) {
                 //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
