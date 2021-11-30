@@ -1,3 +1,10 @@
+app.use((req, res, next) => { //Cria um middleware onde todas as requests passam por ele
+    if ((req.headers["x-forwarded-proto"] || "").endsWith("http")) //Checa se o protocolo informado nos headers é HTTP
+        res.redirect(`https://${req.hostname}${req.url}`); //Redireciona pra HTTPS
+    else //Se a requisição já é HTTPS
+        next(); //Não precisa redirecionar, passa para os próximos middlewares que servirão com o conteúdo desejado
+});
+
 const express = require('express');
 const cors = require('cors');
 var app = express();
@@ -24,13 +31,6 @@ const db = mysql.createPool({
 
 app.use(cors());
 app.use(express.json());
-
-app.use((req, res, next) => { //Cria um middleware onde todas as requests passam por ele
-    if ((req.headers["x-forwarded-proto"] || "").endsWith("http")) //Checa se o protocolo informado nos headers é HTTP
-        res.redirect(`https://${req.hostname}${req.url}`); //Redireciona pra HTTPS
-    else //Se a requisição já é HTTPS
-        next(); //Não precisa redirecionar, passa para os próximos middlewares que servirão com o conteúdo desejado
-});
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
