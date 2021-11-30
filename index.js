@@ -64,8 +64,20 @@ app.post("/register", (req, res) => {
     var id;
     var idProfile;
 
-    if(profile === 'Gerente' ) {
+    if(profile.toLowerCase() === 'gerente' || profile.toLowerCase() === 'gerencia') {
         idProfile = 5;
+    }
+
+    if(profile.toLowerCase() === 'aluno' || profile.toLowerCase === 'aluna') {
+        idProfile = 15;
+    }
+
+    if(profile.toLowerCase() === 'professor' || profile.toLowerCase() === 'professora') {
+        idProfile = 25;
+    }
+
+    if(profile.toLowerCase() === 'recepcionista') {
+        idProfile = 35;
     }
 
     return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
