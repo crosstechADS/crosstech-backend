@@ -50,7 +50,7 @@ function verifyJWT(req, res, next) {
 
 app.post("/treinoRegister", (req, res) => {
     const treino = req.body.treino;
-    const treinoObs = req.body.obsTreino;
+    const treinoObs = req.body.treinoObs;
     const email = req.body.email;
     var id;
     db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
