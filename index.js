@@ -292,7 +292,7 @@ app.post("/exerciciosregister", (req, res) => {
     const exercicio = req.body.exercicio;
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
-    var id_Tipo_Exercicio;
+    const id_Tipo_Exercicio = 0;
     switch(exercicioTipo) {
         case 'aerobica':
             id_Tipo_Exercicio = 5;
