@@ -25,6 +25,12 @@ const db = mysql.createPool({
 app.use(cors());
 app.use(express.json());
 
+app.get('/', function(req, res, next) {
+    if (req.protocol == 'http') {
+        res.redirect('https://' + 
+        req.get('host') + req.originalUrl);
+    }
+});
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
