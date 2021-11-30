@@ -62,6 +62,11 @@ app.post("/register", (req, res) => {
     const cidade = req.body.cidade;
     const uf = req.body.uf;
     var id;
+    var idProfile;
+
+    if(profile === 'Gerente' ) {
+        idProfile = 5;
+    }
 
     return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
@@ -73,7 +78,7 @@ app.post("/register", (req, res) => {
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
                     db.query(
                         "INSERT INTO TB_USUARIOS (DS_NOME, DS_EMAIL, DS_SENHA, ID_TIPO_PERFIL) VALUES (?, ?, ?, ?)",
-                        [nome, email, hash, profile],
+                        [nome, email, hash, idProfile],
                         (err, response) => {
                             if (err) {
                                 res.status(401).send(err)
