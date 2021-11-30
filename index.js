@@ -53,6 +53,15 @@ app.post("/register", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const profile = req.body.profile;
+    const rua = req.body.rua;
+    const cpf = req.body.cpf;
+    const numeroLogradouro = req.body.numeroLogradouro;
+    const bairro = req.body.bairro;
+    const dataNascimento = req.body.dataNascimento;
+    const cep = req.body.cep;
+    const cidade = req.body.cidade;
+    const uf = req.body.uf;
+    var id;
 
     return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
@@ -67,15 +76,39 @@ app.post("/register", (req, res) => {
                         [nome, email, hash, profile],
                         (err, response) => {
                             if (err) {
-                                res.status(401).send({ msg: "Body Incorreto" })
+                                res.status(401).send(err)
                             } else {
-                                return res.send({ msg: "Cadastrado com sucesso!" });
+                                db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
+                                    (err, result) => {
+                                        if (err) {
+                                            res.send(err)
+                                        }
+                                        else {
+                                            id = result[0].ID_USUARIO;
+                                            db.query("SELECT * FROM TB_DADOS_USUARIO WHERE DS_CPF = ?", [cpf],
+                                            (err, result) => {
+                                                if(err) {
+                                                    return res.send(err);
+                                                }
+                                                else {
+                                                    db.query("INSERT INTO TB_DADOS_USUARIO (DS_RUA, DS_CPF, DS_NUMERO_LOGRADOURO, DS_BAIRRO, DT_NASCIMENTO, DS_CEP, DS_CIDADE, DS_UF, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                                    [rua, cpf, numeroLogradouro, bairro, dataNascimento, cep, cidade, uf, id],
+                                                    (err) => {
+                                                        if(err) {
+                                                            return res.send(err);
+                                                        }
+                                                        else {
+                                                            return res.send({ msg: "Cadastrado com sucesso!" });
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    }
+                                )
                             }
                         });
                 })
-
-                //rabiscar aqui
-
             } else {
                 return res.send({ msg: "Usuário já cadastrado." })
             }
