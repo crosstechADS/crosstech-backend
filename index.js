@@ -230,7 +230,7 @@ app.post("/login", (req, res) => {
     );
 });
 */
-app.post("/calculoIMC", (req, res) => {
+/*app.post("/calculoIMC", (req, res) => {
     const peso = req.body.peso;
     console.log(peso);
     const altura = req.body.altura;
@@ -239,7 +239,7 @@ app.post("/calculoIMC", (req, res) => {
     console.log(imc)
     res.status(200);
     res.json({ msg: imc });
-});
+});*/
 
 app.post("/login", (req, res) => {
     const email = req.body.email;
@@ -292,8 +292,21 @@ app.post("/exerciciosregister", (req, res) => {
     const exercicio = req.body.exercicio;
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
+    var id_Tipo_Exercicio;
+    switch(exercicioTipo) {
+        case 'aerobica':
+            id_Tipo_Exercicio = 5;
+            break;
+        case 'funcional':
+            id_Tipo_Exercicio = 15;
+            break;
+        case 'pilates':
+            id_Tipo_Exercicio = 25;
+            break;
+    }
+
     return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO) VALUES (?,?,?,?)",
-        [exercicio, exercicioObs, null, exercicioTipo],
+        [exercicio, exercicioObs, null, id_Tipo_Exercicio],
         (err, response) => {
             if (err) {
                 res.status(401).send({ msg: "Body Incorreto" })
