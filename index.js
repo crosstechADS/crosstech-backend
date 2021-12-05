@@ -13,6 +13,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 const { response } = require('express');
+const axios = require('axios');
 require("dotenv-safe").config();
 
 const db = mysql.createPool({
@@ -399,10 +400,26 @@ app.post("/exerciciosregister", (req, res) => {
     )
 })
 
-
-
-
-
+//função para fazer a consulta do CEP
+app.post("/consultaCEP", async(req, res) => {
+    const cep = req.body.cep;
+    //validação para ver se o CEP tem 8 digitos
+    if(cep.length != 8) {
+        return res.send({ msg: "CEP inválido!"});
+    } else {
+        try {
+            //fazendo a chamada da API que tras as informações e retornando para a tela.
+            const Response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+            const logradouro = Response.data.logradouro
+            const bairro = Response.data.bairro
+            const localidade = Response.data.localidade
+            const uf = Response.data.uf
+            return res.send({ Rua: logradouro, Bairro: bairro, Cidade: localidade, UF: uf})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+});
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
