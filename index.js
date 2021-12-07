@@ -79,6 +79,8 @@ app.post("/register", (req, res) => {
     const profile = req.body.profile;
     const inicioMatricula = req.body.inicioMatricula;
     const fimMatricula = req.body.fimMatricula;
+    const inicioContratacao = req.body.inicioContratacao;
+    const fimContratacao = req.body.fimContratacao;
     const rua = req.body.rua;
     const cpf = req.body.cpf;
     const numeroLogradouro = req.body.numeroLogradouro;
@@ -115,8 +117,8 @@ app.post("/register", (req, res) => {
             if (!result?.length) {
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
                     db.query(
-                        "INSERT INTO TB_USUARIOS (DS_NOME, DS_EMAIL, DS_SENHA, DT_INICIO_MATRICULA, DT_FIM_MATRICULA) VALUES (?, ?, ?, ?, ?)",
-                        [nome, email, hash, inicioMatricula, fimMatricula],
+                        "INSERT INTO TB_USUARIOS (DS_NOME, DS_EMAIL, DS_SENHA) VALUES (?, ?, ?)",
+                        [nome, email, hash],
                         (err, response) => {
                             if (err) {
                                 res.status(401).send(err)
@@ -141,8 +143,8 @@ app.post("/register", (req, res) => {
                                                                     return res.send(err);
                                                                 }
                                                                 else {
-                                                                    db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, DT_EXCLUSAO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), NULL, ?, ?)",
-                                                                        [nome, profile, id, idProfile]);
+                                                                    db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, DT_EXCLUSAO, DT_INICIO_MATRICULA, DT_FIM_MATRICULA, DT_INICIO_CONTRATACAO, DT_FIM_CONTRATACAO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), NULL, ?, ?, ?, ?, ?, ?)",
+                                                                        [nome, profile, inicioMatricula, fimMatricula, inicioContratacao, fimContratacao, id, idProfile]);
                                                                     return res.send({ msg: "Cadastrado com sucesso!" });
                                                                 }
                                                             })
