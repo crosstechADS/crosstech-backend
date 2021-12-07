@@ -56,18 +56,18 @@ app.post("/treinoRegister", (req, res) => {
     var id;
     db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
-            if(err) {
+            if (err) {
                 res.send(err);
             } else {
                 id = result[0].ID_USUARIO;
                 db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, ID_USUARIO, DT_EXCLUSAO) VALUES (?, ?, ?, ?)", [treino, treinoObs, id, null],
-                (err, result) => {
-                    if(err) {
-                        res.send(err);
-                    } else {
-                        res.send({msg: 'Treino adicionado com sucesso!'});
-                    }
-                })
+                    (err, result) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            res.send({ msg: 'Treino adicionado com sucesso!' });
+                        }
+                    })
             }
         })
 });
@@ -77,6 +77,8 @@ app.post("/register", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const profile = req.body.profile;
+    const inicioMatricula = req.body.inicioMatricula;
+    const fimMatricula = req.body.fimMatricula;
     const rua = req.body.rua;
     const cpf = req.body.cpf;
     const numeroLogradouro = req.body.numeroLogradouro;
@@ -88,19 +90,19 @@ app.post("/register", (req, res) => {
     var id;
     var idProfile;
 
-    if(profile.toLowerCase() === 'gerente' || profile.toLowerCase() === 'gerencia') {
+    if (profile.toLowerCase() === 'gerente' || profile.toLowerCase() === 'gerencia') {
         idProfile = 5;
     }
 
-    if(profile.toLowerCase() === 'aluno' || profile.toLowerCase === 'aluna') {
+    if (profile.toLowerCase() === 'aluno' || profile.toLowerCase === 'aluna') {
         idProfile = 15;
     }
 
-    if(profile.toLowerCase() === 'professor' || profile.toLowerCase() === 'professora') {
+    if (profile.toLowerCase() === 'professor' || profile.toLowerCase() === 'professora') {
         idProfile = 25;
     }
 
-    if(profile.toLowerCase() === 'recepcionista') {
+    if (profile.toLowerCase() === 'recepcionista') {
         idProfile = 35;
     }
 
@@ -113,8 +115,8 @@ app.post("/register", (req, res) => {
             if (!result?.length) {
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
                     db.query(
-                        "INSERT INTO TB_USUARIOS (DS_NOME, DS_EMAIL, DS_SENHA, ID_TIPO_PERFIL) VALUES (?, ?, ?, ?)",
-                        [nome, email, hash, idProfile],
+                        "INSERT INTO TB_USUARIOS (DS_NOME, DS_EMAIL, DS_SENHA, DT_INICIO_MATRICULA, DT_FIM_MATRICULA) VALUES (?, ?, ?, ?, ?)",
+                        [nome, email, hash, inicioMatricula, fimMatricula],
                         (err, response) => {
                             if (err) {
                                 res.status(401).send(err)
@@ -126,24 +128,26 @@ app.post("/register", (req, res) => {
                                         }
                                         else {
                                             id = result[0].ID_USUARIO;
-                                            db.query("SELECT * FROM TB_DADOS_USUARIO WHERE DS_CPF = ?", [cpf],
-                                            (err, result) => {
-                                                if(err) {
-                                                    return res.send(err);
-                                                }
-                                                else {
-                                                    db.query("INSERT INTO TB_DADOS_USUARIO (DS_RUA, DS_CPF, DS_NUMERO_LOGRADOURO, DS_BAIRRO, DT_NASCIMENTO, DS_CEP, DS_CIDADE, DS_UF, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                                    [rua, cpf, numeroLogradouro, bairro, dataNascimento, cep, cidade, uf, id],
-                                                    (err) => {
-                                                        if(err) {
-                                                            return res.send(err);
-                                                        }
-                                                        else {
-                                                            return res.send({ msg: "Cadastrado com sucesso!" });
-                                                        }
-                                                    })
-                                                }
-                                            })
+                                            db.query("SELECT * FROM TB_DADOS_USUARIOS WHERE DS_CPF = ?", [cpf],
+                                                (err, result) => {
+                                                    if (err) {
+                                                        return res.send(err);
+                                                    }
+                                                    else {
+                                                        db.query("INSERT INTO TB_DADOS_USUARIOS (DS_RUA, DS_CPF, DS_NUMERO_LOGRADOURO, DS_BAIRRO, DT_NASCIMENTO, DS_CEP, DS_CIDADE, DS_UF, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                                            [rua, cpf, numeroLogradouro, bairro, dataNascimento, cep, cidade, uf, id],
+                                                            (err) => {
+                                                                if (err) {
+                                                                    return res.send(err);
+                                                                }
+                                                                else {
+                                                                    db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, DT_EXCLUSAO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), NULL, ?, ?)",
+                                                                        [nome, profile, id, idProfile]);
+                                                                    return res.send({ msg: "Cadastrado com sucesso!" });
+                                                                }
+                                                            })
+                                                    }
+                                                })
                                         }
                                     }
                                 )
@@ -156,7 +160,7 @@ app.post("/register", (req, res) => {
         });
 });
 
-app.post("/registerTbDadosUsuario", (req, res) => {
+/*app.post("/registerTbDadosUsuario", (req, res) => {
     const email = req.body.email
     const rua = req.body.rua;
     const cpf = req.body.cpf;
@@ -200,7 +204,7 @@ app.post("/registerTbDadosUsuario", (req, res) => {
                 return res.send({ msg: "Usuário já cadastrado." })
             }
         });
-});
+});*/
 
 
 //verifyJWT utilizado para validar se o token está correto!
@@ -373,15 +377,15 @@ app.post("/exerciciosregister", (req, res) => {
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
     var id;
-    if(exercicioTipo === 'Aerobica' || exercicioTipo === 'aerobica') {
+    if (exercicioTipo === 'Aerobica' || exercicioTipo === 'aerobica') {
         id = 5;
     }
 
-    if(exercicioTipo === 'Funcional' || exercicioTipo === 'funcional') {
+    if (exercicioTipo === 'Funcional' || exercicioTipo === 'funcional') {
         id = 15;
     }
 
-    if(exercicioTipo === 'Pilates' || exercicioTipo === 'pilates') {
+    if (exercicioTipo === 'Pilates' || exercicioTipo === 'pilates') {
         id = 25;
     }
 
@@ -390,7 +394,7 @@ app.post("/exerciciosregister", (req, res) => {
         (err, response) => {
             if (err) {
                 //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
-                res.status(401).send({err})
+                res.status(401).send({ err })
             }
             else {
                 //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
@@ -401,11 +405,11 @@ app.post("/exerciciosregister", (req, res) => {
 })
 
 //função para fazer a consulta do CEP
-app.post("/consultaCEP", async(req, res) => {
+app.post("/consultaCEP", async (req, res) => {
     const cep = req.body.cep;
     //validação para ver se o CEP tem 8 digitos
-    if(cep.length != 8) {
-        return res.send({ msg: "CEP inválido!"});
+    if (cep.length != 8) {
+        return res.send({ msg: "CEP inválido!" });
     } else {
         try {
             //fazendo a chamada da API que tras as informações e retornando para a tela.
@@ -414,7 +418,7 @@ app.post("/consultaCEP", async(req, res) => {
             const bairro = Response.data.bairro
             const localidade = Response.data.localidade
             const uf = Response.data.uf
-            return res.send({ Rua: logradouro, Bairro: bairro, Cidade: localidade, UF: uf})
+            return res.send({ Rua: logradouro, Bairro: bairro, Cidade: localidade, UF: uf })
         } catch (error) {
             console.log(error)
         }
