@@ -36,7 +36,7 @@ app.use(express.json());
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
     //Tipo de token passado no request
-    const token = req.headers['x-access-token'];
+    const token = req.body.token;
     //Erro caso o token seja inválido ou vencido
     if (!token) return res.status(401).json({ auth: false, message: 'Token não fornecido.' })
 
@@ -211,7 +211,7 @@ app.post("/register", (req, res) => {
 
 //verifyJWT utilizado para validar se o token está correto!
 app.post("/home", verifyJWT, (req, res) => {
-    return res.json({ msg: "Token válido" });
+    res.send({ msg: "Token válido" });
 });
 
 app.post("/logout", (req, res) => {
@@ -406,6 +406,7 @@ app.post("/exerciciosregister", (req, res) => {
     )
 })
 
+/*
 //função para fazer a consulta do CEP
 app.post("/consultaCEP", async (req, res) => {
     const cep = req.body.cep;
@@ -425,7 +426,7 @@ app.post("/consultaCEP", async (req, res) => {
             console.log(error)
         }
     }
-});
+}); */
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
