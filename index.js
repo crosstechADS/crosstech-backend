@@ -59,6 +59,11 @@ app.post("/resetSenha", (req, res) => {
             if (err) {
                 res.send({err, msg: 'E-mail não cadastrado!'});
             } else {
+                try {
+                    var id = result[0].ID_USUARIO;                    
+                } catch (error) {
+                    res.send({error, msg: 'E-mail não cadastrado!'})
+                }
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
                     if(erro) {
                         res.send({msg: 'Erro ao criptografar a senha!', senha: hash})
