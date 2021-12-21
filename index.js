@@ -23,8 +23,8 @@ const db = mysql.createPool({
 
 });
 
-app.use(cors({ credentials: true }))
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
@@ -166,6 +166,22 @@ app.post("/register", (req, res) => {
     var id;
     var idProfile;
 
+    if (profile.toLowerCase() === 'gerente' || profile.toLowerCase() === 'gerencia') {
+        idProfile = 5;
+    }
+
+    if (profile.toLowerCase() === 'aluno' || profile.toLowerCase === 'aluna') {
+        idProfile = 15;
+    }
+
+    if (profile.toLowerCase() === 'professor' || profile.toLowerCase() === 'professora') {
+        idProfile = 25;
+    }
+
+    if (profile.toLowerCase() === 'recepcionista') {
+        idProfile = 35;
+    }
+
     return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
@@ -188,6 +204,7 @@ app.post("/register", (req, res) => {
                                         }
                                         else {
                                             id = result[0].ID_USUARIO;
+
                                             db.query("SELECT * FROM TB_DADOS_USUARIOS WHERE DS_CPF = ?", [cpf],
                                                 (err, result) => {
                                                     if (err) {
@@ -202,8 +219,8 @@ app.post("/register", (req, res) => {
                                                                 }
                                                                 else {
                                                                     db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, DT_EXCLUSAO, DT_INICIO_MATRICULA, DT_FIM_MATRICULA, DT_INICIO_CONTRATACAO, DT_FIM_CONTRATACAO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), NULL, ?, ?, ?, ?, ?, ?)",
-                                                                        [nome, profile, inicioMatricula, fimMatricula, inicioContratacao, fimContratacao, id, idProfile]);
-                                                                    return res.send({ msg: "Cadastrado com sucesso!" });
+                                                                        [nome, profile, inicioMatricula, fimMatricula, inicioContratacao, fimContratacao, id, idProfile])
+                                                                    return res.send({ msg: "Cadastrado com sucesso!" })
                                                                 }
                                                             })
                                                     }
