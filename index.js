@@ -1,10 +1,3 @@
-/*app.use((req, res, next) => { //Cria um middleware onde todas as requests passam por ele
-    if ((req.headers["x-forwarded-proto"] || "").endsWith("http")) //Checa se o protocolo informado nos headers é HTTP
-        res.redirect(`https://${req.hostname}${req.url}`); //Redireciona pra HTTPS
-    else //Se a requisição já é HTTPS
-        next(); //Não precisa redirecionar, passa para os próximos middlewares que servirão com o conteúdo desejado
-});*/
-
 const express = require('express');
 const cors = require('cors');
 var app = express();
@@ -14,8 +7,6 @@ const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 const { response } = require('express');
 const axios = require('axios');
-const res = require('express/lib/response');
-const req = require('express/lib/request');
 require("dotenv-safe").config();
 
 const db = mysql.createPool({
@@ -143,7 +134,7 @@ app.post("/treinoRegister", (req, res) => {
                 res.send(err);
             } else {
                 id = result[0].ID_USUARIO;
-                db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, ID_USUARIO, DT_EXCLUSAO) VALUES (?, ?, ?, ?)", [treino, treinoObs, id, null],
+                db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, DT_EXCLUSAO, ID_USUARIO) VALUES (?, ?, ?, ?)", [treino, treinoObs, null, id],
                     (err, result) => {
                         if (err) {
                             res.send(err);
@@ -297,7 +288,7 @@ app.post("/login", (req, res) => {
     const password = req.body.password;
     var id;
     var tipoPerfil;
-    db.query("SELECT usu.ID_USUARIO, perf.DS_TIPO_PERFIL FROM heroku_56d9955fbec8988.tb_usuarios usu INNER JOIN heroku_56d9955fbec8988.tb_grupos_usuarios gru ON gru.ID_USUARIO = usu.ID_USUARIO INNER JOIN heroku_56d9955fbec8988.tb_tipo_perfil perf on gru.ID_TIPO_PERFIL = perf.ID_TIPO_PERFIL WHERE usu.DS_EMAIL = ?", [email],
+    db.query("SELECT usu.ID_USUARIO, perf.DS_TIPO_PERFIL FROM tb_usuarios usu INNER JOIN tb_grupos_usuarios gru ON gru.ID_USUARIO = usu.ID_USUARIO INNER JOIN heroku_56d9955fbec8988.tb_tipo_perfil perf on gru.ID_TIPO_PERFIL = perf.ID_TIPO_PERFIL WHERE usu.DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
                 res.send(err)
@@ -347,6 +338,7 @@ app.post("/exerciciosregister", (req, res) => {
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
     var id;
+    var idMidiaExercicio;
     if (exercicioTipo === 'Aerobica' || exercicioTipo === 'aerobica') {
         id = 5;
     }
@@ -359,15 +351,15 @@ app.post("/exerciciosregister", (req, res) => {
         id = 25;
     }
 
-    return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO) VALUES (?,?,?,?)",
-        [exercicio, exercicioObs, null, id],
+    /*db.query("SELECT *FROM ") -----DESCOBRIR COMO PEGAR O ID DA MIDIA-------*/
+
+    return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO, ID_MIDIA_EXERCICIO) VALUES (?,?,?,?,?)",
+        [exercicio, exercicioObs, null, id, 5],
         (err, response) => {
             if (err) {
-                //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
                 res.status(401).send({ err })
             }
             else {
-                //res.send({DS_EXERCICIO: exercicio, OBS_EXERCICIO: exercicioObs, ID: id_Tipo_Exercicio})
                 return res.send({ msg: "Cadastrado com sucesso!" });
             }
         }
