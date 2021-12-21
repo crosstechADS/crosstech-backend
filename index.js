@@ -23,8 +23,8 @@ const db = mysql.createPool({
 
 });
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({ credentials: true }))
+app.use(express.json())
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
@@ -48,23 +48,23 @@ app.post("/resetSenha", (req, res) => {
     db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
-                res.send({err, msg: 'E-mail não cadastrado!'});
+                res.send({ err, msg: 'E-mail não cadastrado!' });
             } else {
                 try {
-                    var id = result[0].ID_USUARIO;                    
+                    var id = result[0].ID_USUARIO;
                 } catch (error) {
-                    res.send({error, msg: 'E-mail não cadastrado!'})
+                    res.send({ error, msg: 'E-mail não cadastrado!' })
                 }
                 bcrypt.hash(password, saltRounds, (erro, hash) => {
-                    if(erro) {
-                        res.send({msg: 'Erro ao criptografar a senha!', senha: hash})
+                    if (erro) {
+                        res.send({ msg: 'Erro ao criptografar a senha!', senha: hash })
                     } else {
                         db.query("UPDATE TB_USUARIOS SET DS_SENHA = ? WHERE DS_EMAIL = ?", [hash, email],
                             (err, result) => {
                                 if (err) {
-                                    res.send({err, msg: 'Tente novamente!'})
+                                    res.send({ err, msg: 'Tente novamente!' })
                                 } else {
-                                    res.send({msg: 'Senha alterada com sucesso!'})
+                                    res.send({ msg: 'Senha alterada com sucesso!' })
                                 }
                             })
                     }
@@ -80,47 +80,47 @@ app.post("/treinoSelect", (req, res) => {
     var id;
     //pega o ID do usuário
     db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email], (err, result) => {
-            if (err) {
-                res.send(err);
-            } else {
-                id = result[0].ID_USUARIO;
-                //Busca na base todos os treinos vinculados ao id usuário fornecido
-                db.query("SELECT * FROM TB_TREINOS WHERE ID_USUARIO = ?", [id], (err, result) => {
-                    if(err) {
-                        res.send(err)
-                    } else {
-                        //Retorna tudo que contém na base
-                        res.send({ data: result})
-                    }
-                })
-            }
-        })
+        if (err) {
+            res.send(err);
+        } else {
+            id = result[0].ID_USUARIO;
+            //Busca na base todos os treinos vinculados ao id usuário fornecido
+            db.query("SELECT * FROM TB_TREINOS WHERE ID_USUARIO = ?", [id], (err, result) => {
+                if (err) {
+                    res.send(err)
+                } else {
+                    //Retorna tudo que contém na base
+                    res.send({ data: result })
+                }
+            })
+        }
+    })
 })
 
 //Chamada para retornar todos os exercicios de um usuário na base
 app.get("/exercicioSelect", (req, res) => {
     //Busca na base todos os exercicios selecionados
     db.query("SELECT * FROM TB_EXERCICIOS", (err, result) => {
-            if (err) {
-                res.send(err);
-            } else {
-                //Retorna tudo que contém na base
-                res.send({ data: result})
-            }
-        })
+        if (err) {
+            res.send(err);
+        } else {
+            //Retorna tudo que contém na base
+            res.send({ data: result })
+        }
+    })
 })
 
 //Chamada para retornar todos os exercicios_treino de um usuário na base
 app.get("/exercicioTreinoSelect", (req, res) => {
     //Busca na base todos os exercicios_treino selecionados
     db.query("SELECT * FROM tb_exercicios_treinos", (err, result) => {
-            if (err) {
-                res.send(err);
-            } else {
-                //Retorna tudo que contém na base
-                res.send({ data: result})
-            }
-        })
+        if (err) {
+            res.send(err);
+        } else {
+            //Retorna tudo que contém na base
+            res.send({ data: result })
+        }
+    })
 })
 
 app.post("/treinoRegister", (req, res) => {
