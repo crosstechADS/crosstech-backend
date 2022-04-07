@@ -105,7 +105,7 @@ app.get("/exercicioSelect", (req, res) => {
             res.send(err);
         } else {
             //Retorna tudo que contém na base
-            res.send({ data: result })
+            res.send(result)
         }
     })
 })
