@@ -84,4 +84,35 @@ const usuariosRegister = (req, res) => {
         });
 };
 
-module.exports = { usuariosRegister }
+const resetSenha = (req, res) => {
+    const email = req.body.email
+    const password = req.body.password
+    db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
+        (err, result) => {
+            if (err) {
+                res.send({ err, msg: 'E-mail não cadastrado!' });
+            } else {
+                try {
+                    var id = result[0].ID_USUARIO;
+                } catch (error) {
+                    res.send({ error, msg: 'E-mail não cadastrado!' })
+                }
+                bcrypt.hash(password, saltRounds, (erro, hash) => {
+                    if (erro) {
+                        res.send({ msg: 'Erro ao criptografar a senha!', senha: hash })
+                    } else {
+                        db.query("UPDATE TB_USUARIOS SET DS_SENHA = ? WHERE DS_EMAIL = ?", [hash, email],
+                            (err, result) => {
+                                if (err) {
+                                    res.send({ err, msg: 'Tente novamente!' })
+                                } else {
+                                    res.send({ msg: 'Senha alterada com sucesso!' })
+                                }
+                            })
+                    }
+                })
+            }
+        })
+}
+
+module.exports = { usuariosRegister, resetSenha }

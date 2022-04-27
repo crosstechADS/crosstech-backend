@@ -53,4 +53,9 @@ const login = (req, res) => {
     );
 };
 
-module.exports = { login }
+const logout = (req, res) => {
+    res.send({ msg: "Saindo" })
+    res.end();
+}
+
+module.exports = { login, logout }

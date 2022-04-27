@@ -14,8 +14,10 @@ app.use(express.json());
 
 // @controllers
 const { treinoRegister, treinoSelect } = require('./src/controllers/treino.controller')
-const { usuariosRegister } = require('./src/controllers/usuarios.controller')
-const { login } = require('./src/controllers/login.controller')
+const { usuariosRegister, resetSenha } = require('./src/controllers/usuarios.controller')
+const { login, logout } = require('./src/controllers/login.controller')
+const { exerciciosRegister, exercicioTreinoSelect, exercicioSelect } = require('./src/controllers/exercicios.controller')
+const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller')
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
@@ -33,65 +35,16 @@ function verifyJWT(req, res, next) {
     })
 }
 
-app.post("/resetSenha", (req, res) => {
-    const email = req.body.email
-    const password = req.body.password
-    db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
-        (err, result) => {
-            if (err) {
-                res.send({ err, msg: 'E-mail não cadastrado!' });
-            } else {
-                try {
-                    var id = result[0].ID_USUARIO;
-                } catch (error) {
-                    res.send({ error, msg: 'E-mail não cadastrado!' })
-                }
-                bcrypt.hash(password, saltRounds, (erro, hash) => {
-                    if (erro) {
-                        res.send({ msg: 'Erro ao criptografar a senha!', senha: hash })
-                    } else {
-                        db.query("UPDATE TB_USUARIOS SET DS_SENHA = ? WHERE DS_EMAIL = ?", [hash, email],
-                            (err, result) => {
-                                if (err) {
-                                    res.send({ err, msg: 'Tente novamente!' })
-                                } else {
-                                    res.send({ msg: 'Senha alterada com sucesso!' })
-                                }
-                            })
-                    }
-                })
-            }
-        })
-})
+app.post("/resetSenha", resetSenha);
 
 //Chamada para retornar todos os treinos de um usuário na base
-app.post("/treinoSelect", treinoSelect)
+app.post("/treinoSelect", treinoSelect);
 
 //Chamada para retornar todos os exercicios de um usuário na base
-app.get("/exercicioSelect", (req, res) => {
-    //Busca na base todos os exercicios selecionados
-    db.query("SELECT * FROM TB_EXERCICIOS", (err, result) => {
-        if (err) {
-            res.send(err);
-        } else {
-            //Retorna tudo que contém na base
-            res.send(result)
-        }
-    })
-})
+app.get("/exercicioSelect", exercicioSelect);
 
 //Chamada para retornar todos os exercicios_treino de um usuário na base
-app.get("/exercicioTreinoSelect", (req, res) => {
-    //Busca na base todos os exercicios_treino selecionados
-    db.query("SELECT * FROM tb_exercicios_treinos", (err, result) => {
-        if (err) {
-            res.send(err);
-        } else {
-            //Retorna tudo que contém na base
-            res.send({ data: result })
-        }
-    })
-})
+app.get("/exercicioTreinoSelect", exercicioTreinoSelect);
 
 app.post("/treinoRegister", treinoRegister);
 
@@ -103,98 +56,14 @@ app.post("/home", verifyJWT, (req, res) => {
     res.send({ msg: "Token válido" });
 });
 
-app.post("/logout", (req, res) => {
-    res.send({ msg: "Saindo" })
-    res.end();
-});
+app.post("/logout", logout);
 
 
-app.post("/delete", (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    var id;
-
-    db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
-        (err, result) => {
-            if (err) {
-                res.send(err)
-            }
-            if (result?.length) {
-                id = result[0].ID_USUARIO
-            }
-        }
-    )
-
-    db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
-        (err, result) => {
-            console.log(result)
-            if (err) {
-                res.send(err)
-            }
-            if (result?.length) {
-                bcrypt.compare(password, result[0].DS_SENHA,
-                    (err, result) => {
-                        if (result) {
-                            db.query("DELETE FROM TB_USUARIO WHERE ID_USUARIO = ?", [id])
-                            res.status(200)
-                            res.send({ msg: "Usuário excluido com sucesso!" })
-                        }
-                        else {
-                            res.status(401)
-                            res.send({ msg: "Senha incorreta." })
-                        }
-                    });
-            }
-            else {
-                res.status(404)
-                res.send({ msg: "Usuário não encontrado." })
-            }
-        }
-    );
-})
-
-app.post("/calculoIMC", (req, res) => {
-    const peso = req.body.peso;
-    const altura = req.body.altura;
-    const imc = (peso / (altura * altura)).toFixed(2)
-    res.status(200);
-    res.json({ IMC: imc });
-})
+app.post("/calculoIMC", calculoIMC);
 
 app.post("/login", login);
 
-app.post("/exerciciosregister", (req, res) => {
-    const exercicio = req.body.exercicio;
-    const exercicioObs = req.body.exercicioObs;
-    const exercicioTipo = req.body.exercicioTipo;
-    var id;
-    var idMidiaExercicio;
-    if (exercicioTipo === 'Aerobica' || exercicioTipo === 'aerobica') {
-        id = 5;
-    }
-
-    if (exercicioTipo === 'Funcional' || exercicioTipo === 'funcional') {
-        id = 15;
-    }
-
-    if (exercicioTipo === 'Pilates' || exercicioTipo === 'pilates') {
-        id = 25;
-    }
-
-    /*db.query("SELECT *FROM ") -----DESCOBRIR COMO PEGAR O ID DA MIDIA-------*/
-
-    return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO, ID_MIDIA_EXERCICIO) VALUES (?,?,?,?,?)",
-        [exercicio, exercicioObs, null, id, 5],
-        (err, response) => {
-            if (err) {
-                res.status(401).send({ err })
-            }
-            else {
-                return res.send({ msg: "Cadastrado com sucesso!" });
-            }
-        }
-    )
-})
+app.post("/exerciciosregister", exerciciosRegister);
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
