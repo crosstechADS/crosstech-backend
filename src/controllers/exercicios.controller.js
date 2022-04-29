@@ -4,33 +4,41 @@ const exerciciosRegister = (req, res) => {
     const exercicio = req.body.exercicio;
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
-    var id;
-    var idMidiaExercicio;
-    if (exercicioTipo === 'Aerobica' || exercicioTipo === 'aerobica') {
-        id = 5;
+    const tiposExercicio = {
+        aerobica: 5,
+        funcional: 15,
+        pilates: 25
     }
 
-    if (exercicioTipo === 'Funcional' || exercicioTipo === 'funcional') {
-        id = 15;
-    }
-
-    if (exercicioTipo === 'Pilates' || exercicioTipo === 'pilates') {
-        id = 25;
-    }
+    const idExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
     /*db.query("SELECT *FROM ") -----DESCOBRIR COMO PEGAR O ID DA MIDIA-------*/
 
     return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO, ID_MIDIA_EXERCICIO) VALUES (?,?,?,?,?)",
-        [exercicio, exercicioObs, null, id, 5],
+        [exercicio, exercicioObs, null, idExercicio, 5],
         (err, response) => {
             if (err) {
                 res.status(401).send({ err })
             }
             else {
-                return res.send({ msg: "Cadastrado com sucesso!" });
+                console.log('response:', response)
+                return res.send({ msg: "Cadastrado com sucesso!", record: { id: response.insertId } });
             }
         }
     )
+}
+
+const exerciciosRegisterMidia = (req, res) => {
+    const idExercicio = req.params.id;
+    const { location } = req.file;
+    db.query("UPDATE TB_EXERCICIOS SET DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", [location, idExercicio],
+        (err, _result) => {
+            if (err) {
+                res.send({ err, msg: 'Tente novamente!' })
+            } else {
+                res.send({ msg: 'Midia atualizada com sucesso!' })
+            }
+        })
 }
 
 const exercicioTreinoSelect = (req, res) => {
@@ -57,4 +65,4 @@ const exercicioSelect = (req, res) => {
     })
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect }
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exerciciosRegisterMidia }

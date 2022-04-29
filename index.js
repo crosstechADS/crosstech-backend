@@ -5,19 +5,23 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 require("dotenv-safe").config();
-
+const path = require('path')
 const { db } = require('./src/config/database')
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")))
 
 
 // @controllers
 const { treinoRegister, treinoSelect } = require('./src/controllers/treino.controller')
 const { usuariosRegister, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
-const { exerciciosRegister, exercicioTreinoSelect, exercicioSelect } = require('./src/controllers/exercicios.controller')
-const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller')
+const { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exerciciosRegisterMidia } = require('./src/controllers/exercicios.controller')
+const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller');
+const multer = require('multer');
+const multerConfig = require('./src/config/multer')
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
@@ -50,7 +54,6 @@ app.post("/treinoRegister", treinoRegister);
 
 app.post("/register", usuariosRegister);
 
-
 //verifyJWT utilizado para validar se o token está correto!
 app.post("/home", verifyJWT, (req, res) => {
     res.send({ msg: "Token válido" });
@@ -58,12 +61,13 @@ app.post("/home", verifyJWT, (req, res) => {
 
 app.post("/logout", logout);
 
-
 app.post("/calculoIMC", calculoIMC);
 
 app.post("/login", login);
 
 app.post("/exerciciosregister", exerciciosRegister);
+
+app.post("/exerciciosregister/:id/midia", multer(multerConfig).single('file'), exerciciosRegisterMidia);
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
