@@ -65,4 +65,26 @@ const exercicioSelect = (req, res) => {
     })
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exerciciosRegisterMidia }
+const exercicioUpdate = (req, res) => {
+    //Faz o update de todas as informações na base
+    const idExercicio = req.body.ID_EXERCICIO;
+    const descricaoExercicio = req.body.DS_EXERCICIO;
+    const observacaoExercicio = req.body.OBS_EXERCICIO;
+    const dataInclusao = req.body.DT_INCLUSAO;
+    const dataExclusao = null;
+    const idTipoExercicio = req.body.ID_TIPO_EXERCICIO;
+    const idMidiaExercicio = req.body.ID_MIDIA_EXERCICIO;
+    const descricaoMidiaURL = null;
+
+    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+        (err, result) => {
+            if(err) {
+                res.send({ err, msg: 'Tente novamente!' });
+            } else {
+                res.send({result, msg: 'Exercicio atualizado com sucesso!'});
+            }
+        }
+    )
+}
+
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exerciciosRegisterMidia, exercicioUpdate }
