@@ -84,6 +84,21 @@ const usuariosRegister = (req, res) => {
         });
 };
 
+const alunosSelect = (req, res) => {
+    //busca de todos os dados de usuários alunos
+    db.query("SELECT USU.* FROM TB_USUARIOS USU " + 
+    "INNER JOIN TB_GRUPOS_USUARIOS GRU " + 
+    "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
+    "WHERE GRU.ID_TIPO_PERFIL = 15", 
+    (err, result) => {
+        if(err){
+            res.send(err);
+        }else {
+            res.send(result);
+        }
+    })
+}
+
 const resetSenha = (req, res) => {
     const email = req.body.email
     const password = req.body.password
@@ -115,4 +130,4 @@ const resetSenha = (req, res) => {
         })
 }
 
-module.exports = { usuariosRegister, resetSenha }
+module.exports = { usuariosRegister, resetSenha, alunosSelect }

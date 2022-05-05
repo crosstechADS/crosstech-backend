@@ -16,7 +16,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 
 // @controllers
 const { treinoRegister, treinoSelect } = require('./src/controllers/treino.controller')
-const { usuariosRegister, resetSenha } = require('./src/controllers/usuarios.controller')
+const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
 const { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate } = require('./src/controllers/exercicios.controller')
 const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller');
@@ -38,6 +38,9 @@ function verifyJWT(req, res, next) {
         next();
     })
 }
+
+//função chamando todos os usuários que são alunos
+app.get("/alunosSelect", alunosSelect);
 
 app.post("/resetSenha", resetSenha);
 
