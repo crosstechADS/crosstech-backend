@@ -65,6 +65,19 @@ const exercicioSelect = (req, res) => {
     })
 }
 
+const exercicioEspecifico = (req, res) => {
+    const id = req.params.id;
+    //Busca na base todos os exercicios selecionados
+    db.query("SELECT * FROM TB_EXERCICIOS WHERE ID_EXERCICIO = ?",[id], (err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            //Retorna tudo que contém na base
+            res.send(result)
+        }
+    })
+}
+
 const exercicioUpdate = (req, res) => {
     //Faz o update de todas as informações na base
     const idExercicio = req.body.ID_EXERCICIO;
@@ -87,4 +100,4 @@ const exercicioUpdate = (req, res) => {
     )
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exerciciosRegisterMidia, exercicioUpdate }
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate }
