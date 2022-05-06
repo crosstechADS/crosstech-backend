@@ -94,16 +94,24 @@ const exercicioUpdate = (req, res) => {
     const observacaoExercicio = req.body.OBS_EXERCICIO;
     const dataInclusao = req.body.DT_INCLUSAO;
     const dataExclusao = null;
-    const idTipoExercicio = req.body.ID_TIPO_EXERCICIO;
     const idMidiaExercicio = req.body.ID_MIDIA_EXERCICIO;
     const descricaoMidiaURL = null;
+    const exercicioTipo = req.body.exercicioTipo;
+    const tiposExercicio = {
+        aerobica: 5,
+        funcional: 15,
+        pilates: 25
+    }
 
-    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+    const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
+
+    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
+    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
         (err, result) => {
             if(err) {
                 res.send({ err, msg: 'Tente novamente!' });
             } else {
-                res.send({result, msg: 'Exercicio atualizado com sucesso!'});
+                return res.send({ msg: "Cadastrado com sucesso!", record: { id: res.insertId } });
             }
         }
     )
