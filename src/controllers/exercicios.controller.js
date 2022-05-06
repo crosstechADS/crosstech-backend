@@ -53,9 +53,13 @@ const exercicioTreinoSelect = (req, res) => {
     })
 }
 
+    
+
 const exercicioSelect = (req, res) => {
     //Busca na base todos os exercicios selecionados
-    db.query("SELECT * FROM TB_EXERCICIOS", (err, result) => {
+    db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " + 
+        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " + 
+        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO ", (err, result) => {
         if (err) {
             res.send(err);
         } else {
@@ -68,12 +72,17 @@ const exercicioSelect = (req, res) => {
 const exercicioEspecifico = (req, res) => {
     const id = req.params.id;
     //Busca na base todos os exercicios selecionados
-    db.query("SELECT * FROM TB_EXERCICIOS WHERE ID_EXERCICIO = ?",[id], (err, result) => {
+    db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " + 
+        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " + 
+        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
+        "WHERE EXE.ID_EXERCICIO = ? AND "+
+        "EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO",[id], (err, result) => {
         if (err) {
             res.send(err);
         } else {
             //Retorna tudo que contém na base
             res.send(result)
+
         }
     })
 }
