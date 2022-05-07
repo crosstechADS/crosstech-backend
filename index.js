@@ -18,7 +18,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 const { treinoRegister, treinoSelect } = require('./src/controllers/treino.controller')
 const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
-const { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate } = require('./src/controllers/exercicios.controller')
+const { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
 const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller');
 const multer = require('multer');
 const multerConfig = require('./src/config/multer')
@@ -75,6 +75,8 @@ app.post("/exerciciosregister", exerciciosRegister);
 app.post("/exerciciosregister/:id/midia", multer(multerConfig).single('file'), exerciciosRegisterMidia);
 
 app.post("/updateExercicio", exercicioUpdate)
+
+app.post("/exercicioDelete", exercicioDelete);
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")

@@ -117,4 +117,37 @@ const exercicioUpdate = (req, res) => {
     )
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate }
+const exercicioDelete = (req, res) => {
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
+
+    //Faz o "delete" de todas as informações na base
+    const idExercicio = req.body.ID_EXERCICIO;
+    const descricaoExercicio = req.body.DS_EXERCICIO;
+    const observacaoExercicio = req.body.OBS_EXERCICIO;
+    const dataInclusao = req.body.DT_INCLUSAO;
+    const dataExclusao = today.toISOString();
+    const idMidiaExercicio = req.body.ID_MIDIA_EXERCICIO;
+    const descricaoMidiaURL = null;
+    const exercicioTipo = req.body.exercicioTipo;
+    const tiposExercicio = {
+        aerobica: 5,
+        funcional: 15,
+        pilates: 25
+    }
+
+    const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
+
+    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
+    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+        (err, result) => {
+            if(err) {
+                res.send({ err, msg: 'Tente novamente!' });
+            } else {
+                return res.send({ msg: "Deletado com sucesso!", record: { id: res.insertId } });
+            }
+        }
+    )
+}
+
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }
