@@ -88,7 +88,7 @@ const exercicioEspecifico = (req, res) => {
 }
 
 const selectTipoExercicio = (req, res) => {
-    db.query("SELECT ID_TIPO_EXERCICIO, DS_TIPO_EXERCICIO FROM TB_TIPOS_EXERCICIOS", (err, result) => {
+    db.query("SELECT ID_TIPO_EXERCICIO, DS_TIPO_EXERCICIO FROM TB_TIPOS_EXERCICIOS WHERE DT_EXCLUSAO IS NULL", (err, result) => {
         if (err) {
             res.send(err);
         } else {
@@ -140,16 +140,16 @@ const exercicioDelete = (req, res) => {
     const idMidiaExercicio = req.body.ID_MIDIA_EXERCICIO;
     const descricaoMidiaURL = null;
     const exercicioTipo = req.body.exercicioTipo;
-    const tiposExercicio = {
-        aerobica: 5,
-        funcional: 15,
-        pilates: 25
-    }
+    // const tiposExercicio = {
+    //     aerobica: 5,
+    //     funcional: 15,
+    //     pilates: 25
+    // }
 
-    const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
+    // const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
     return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
-    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
         (err, result) => {
             if(err) {
                 res.send({ err, msg: 'Tente novamente!' });
