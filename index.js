@@ -8,7 +8,6 @@ require("dotenv-safe").config();
 const path = require('path')
 const { db } = require('./src/config/database')
 
-app.use(express());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
