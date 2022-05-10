@@ -46,4 +46,50 @@ const treinoSelect = (req, res) => {
     })
 }
 
-module.exports = { treinoRegister, treinoSelect }
+const updateTreino = (req, res) => {
+    //Faz o update na base de todas as informações recebidas
+    const idTreino = req.body.ID_TREINO;
+    const dsTreino = req.body.DS_TREINO;
+    const obsTreino = req.body.OBS_TREINO;
+    const dtInclusao = req.body.DT_INCLUSAO;
+    const dtExclusao = null;
+    const idUsuario = req.body.ID_USUARIO;
+
+    db.query("UPDATE TB_TREINOS SET DS_TREINO = ?, OBS_TREINO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_USUARIO = ? WHERE ID_TREINO = ?",
+    [dsTreino, obsTreino, dtInclusao, dtExclusao, idUsuario, idTreino],
+        (err, result) => {
+            if(err) {
+                res.send({ err, msg: 'Tente novamente!' });
+            } else {
+                return res.send({ msg: 'Atualizado com sucesso!'});
+            }
+        }
+    )
+}
+
+const deleteTreino = (req, res) => {
+    //Faz o delete na base de todas as informações recebidas
+
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
+
+    const idTreino = req.body.ID_TREINO;
+    const dsTreino = req.body.DS_TREINO;
+    const obsTreino = req.body.OBS_TREINO;
+    const dtInclusao = req.body.DT_INCLUSAO;
+    const dtExclusao = today.toISOString();
+    const idUsuario = req.body.ID_USUARIO;
+
+    db.query("UPDATE TB_TREINOS SET DS_TREINO = ?, OBS_TREINO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_USUARIO = ? WHERE ID_TREINO = ?",
+    [dsTreino, obsTreino, dtInclusao, dtExclusao, idUsuario, idTreino],
+        (err, result) => {
+            if(err) {
+                res.send({ err, msg: 'Tente novamente!' });
+            } else {
+                return res.send({ msg: 'Deletado com sucesso!'});
+            }
+        }
+    )
+}
+
+module.exports = { treinoRegister, treinoSelect, updateTreino, deleteTreino }
