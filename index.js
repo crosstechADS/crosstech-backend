@@ -61,7 +61,7 @@ app.post("/register", usuariosRegister);
 
 //verifyJWT utilizado para validar se o token está correto!
 app.post("/home", verifyJWT, (req, res) => {
-    res.send({ msg: "Token válido" });
+    res.send({ msg: "Autenticado" });
 });
 
 app.post("/logout", logout);
