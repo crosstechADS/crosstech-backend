@@ -4,18 +4,18 @@ const exerciciosRegister = (req, res) => {
     const exercicio = req.body.exercicio;
     const exercicioObs = req.body.exercicioObs;
     const exercicioTipo = req.body.exercicioTipo;
-    const tiposExercicio = {
-        aerobica: 5,
-        funcional: 15,
-        pilates: 25
-    }
+    // const tiposExercicio = {
+    //     aerobica: 5,
+    //     funcional: 15,
+    //     pilates: 25
+    // }
 
-    const idExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
+    // const idExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
     /*db.query("SELECT *FROM ") -----DESCOBRIR COMO PEGAR O ID DA MIDIA-------*/
 
     return db.query("INSERT INTO TB_EXERCICIOS (DS_EXERCICIO, OBS_EXERCICIO, DT_EXCLUSAO, ID_TIPO_EXERCICIO, ID_MIDIA_EXERCICIO) VALUES (?,?,?,?,?)",
-        [exercicio, exercicioObs, null, idExercicio, 5],
+        [exercicio, exercicioObs, null, exercicioTipo, 5],
         (err, response) => {
             if (err) {
                 res.status(401).send({ err })
@@ -87,6 +87,16 @@ const exercicioEspecifico = (req, res) => {
     })
 }
 
+const selectTipoExercicio = (req, res) => {
+    db.query("SELECT ID_TIPO_EXERCICIO, DS_TIPO_EXERCICIO FROM TB_TIPOS_EXERCICIOS", (err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    });
+}
+
 const exercicioUpdate = (req, res) => {
     //Faz o update de todas as informações na base
     const idExercicio = req.body.ID_EXERCICIO;
@@ -150,4 +160,4 @@ const exercicioDelete = (req, res) => {
     )
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, selectTipoExercicio, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }
