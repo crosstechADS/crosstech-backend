@@ -34,7 +34,7 @@ const treinoSelect = (req, res) => {
         } else {
             id = result[0].ID_USUARIO;
             //Busca na base todos os treinos vinculados ao id usuário fornecido
-            db.query("SELECT * FROM TB_TREINOS WHERE ID_USUARIO = ?", [id], (err, result) => {
+            db.query("SELECT * FROM TB_TREINOS WHERE ID_USUARIO = ? AND DT_EXCLUSAO IS NULL", [id], (err, result) => {
                 if (err) {
                     res.send(err);
                 } else {
