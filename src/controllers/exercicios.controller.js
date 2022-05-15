@@ -43,7 +43,7 @@ const exerciciosRegisterMidia = (req, res) => {
 
 const exercicioTreinoSelect = (req, res) => {
     //Busca na base todos os exercicios_treino selecionados
-    db.query("SELECT * FROM tb_exercicios_treinos", (err, result) => {
+    db.query("SELECT * FROM tb_exercicios_treinos wHERE DT_EXCLUSAO IS NULL", (err, result) => {
         if (err) {
             res.send(err);
         } else {
@@ -59,7 +59,9 @@ const exercicioSelect = (req, res) => {
     //Busca na base todos os exercicios selecionados
     db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " + 
         "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " + 
-        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO ", (err, result) => {
+        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
+        "WHERE EXE.DT_EXCLUSAO IS NULL " +
+        "AND TEXE.DT_EXCLUSAO IS NULL", (err, result) => {
         if (err) {
             res.send(err);
         } else {

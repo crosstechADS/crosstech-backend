@@ -89,9 +89,11 @@ const alunosSelect = (req, res) => {
     db.query("SELECT USU.* FROM TB_USUARIOS USU " + 
     "INNER JOIN TB_GRUPOS_USUARIOS GRU " + 
     "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
-    "INNER JOIN TB_DADOS_USUARIOS DAD" +
-    "ON USU.ID_USUARIO = DAD.ID_USUARIO" +
-    "WHERE GRU.ID_TIPO_PERFIL = 15", 
+    "INNER JOIN TB_DADOS_USUARIOS DAD " +
+    "ON USU.ID_USUARIO = DAD.ID_USUARIO " +
+    "WHERE GRU.ID_TIPO_PERFIL = 15 " +
+    "AND USU.DT_EXCLUSAO IS NULL " +
+    "AND GRU.DT_EXCLUSAO IS NULL", 
     (err, result) => {
         if(err){
             res.send(err);
