@@ -48,7 +48,7 @@ const treinoSelect = (req, res) => {
 
 const treinosSelect = (req,res) => {
     db.query(
-        "SELECT TRE.*, USU.DS_NOME FROM TB_TREINOS TRE " +
+        "SELECT TRE.*, USU.* FROM TB_TREINOS TRE " +
         "INNER JOIN TB_USUARIOS USU " +
         "ON TRE.ID_USUARIO = USU.ID_USUARIO " +
         "WHERE TRE.DT_EXCLUSAO IS NULL ", (err, result) => {
@@ -63,7 +63,7 @@ const treinosSelect = (req,res) => {
 const treinoEspecifico = (req, res) => {
     const id = req.params.id;
     db.query(
-        "SELECT TRE.*, USU.DS_NOME FROM TB_TREINOS TRE " +
+        "SELECT TRE.*, USU.* FROM TB_TREINOS TRE " +
         "INNER JOIN TB_USUARIOS USU " +
         "ON TRE.ID_USUARIO = USU.ID_USUARIO " +
         "WHERE TRE.DT_EXCLUSAO IS NULL AND " +
