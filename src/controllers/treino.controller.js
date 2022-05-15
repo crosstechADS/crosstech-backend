@@ -60,6 +60,22 @@ const treinosSelect = (req,res) => {
     })
 }
 
+const treinoEspecifico = (req, res) => {
+    const id = req.params.id;
+    db.query(
+        "SELECT TRE.*, USU.DS_NOME FROM TB_TREINOS TRE " +
+        "INNER JOIN TB_USUARIOS USU " +
+        "ON TRE.ID_USUARIO = USU.ID_USUARIO " +
+        "WHERE TRE.DT_EXCLUSAO IS NULL AND " +
+        "TRE.ID_TREINO = ?", [id], (err, result) => {
+        if(err) {
+            res.send(err);
+        }else{
+            res.send(result);
+        }
+    })
+}
+
 const updateTreino = (req, res) => {
     //Faz o update na base de todas as informações recebidas
     const idTreino = req.body.ID_TREINO;
@@ -106,4 +122,4 @@ const deleteTreino = (req, res) => {
     )
 }
 
-module.exports = { treinoRegister, treinoSelect, treinosSelect, updateTreino, deleteTreino }
+module.exports = { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino }

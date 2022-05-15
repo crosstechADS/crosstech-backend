@@ -16,7 +16,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 
 
 // @controllers
-const { treinoRegister, treinoSelect, treinosSelect, updateTreino, deleteTreino } = require('./src/controllers/treino.controller')
+const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino } = require('./src/controllers/treino.controller')
 const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
 const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
@@ -49,6 +49,8 @@ app.post("/resetSenha", resetSenha);
 app.post("/treinoSelect", treinoSelect);
 
 app.get("/treinosSelect", treinosSelect);
+
+app.get("/treinoEspecifico/:id", treinoEspecifico);
 
 //Chamada para retornar todos os exercicios de um usuário na base
 app.get("/exercicioSelect", exercicioSelect);
