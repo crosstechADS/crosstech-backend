@@ -109,16 +109,16 @@ const exercicioUpdate = (req, res) => {
     const idMidiaExercicio = req.body.ID_MIDIA_EXERCICIO;
     const descricaoMidiaURL = null;
     const exercicioTipo = req.body.exercicioTipo;
-    const tiposExercicio = {
-        aerobica: 5,
-        funcional: 15,
-        pilates: 25
-    }
+    // const tiposExercicio = {
+    //     aerobica: 5,
+    //     funcional: 15,
+    //     pilates: 25
+    // }
 
-    const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
+    // const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
     return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
-    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
         (err, result) => {
             if(err) {
                 res.send({ err, msg: 'Tente novamente!' });
