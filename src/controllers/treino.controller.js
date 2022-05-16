@@ -3,15 +3,8 @@ const { db } = require('../config/database')
 const treinoRegister = (req, res) => {
     const treino = req.body.treino;
     const treinoObs = req.body.treinoObs;
-    const email = req.body.email;
-    var id;
-    db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
-        (err, result) => {
-            if (err) {
-                res.send(err);
-            } else {
-                id = result[0].ID_USUARIO;
-                db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, DT_EXCLUSAO, ID_USUARIO) VALUES (?, ?, ?, ?)", [treino, treinoObs, null, id],
+    const usuarioId = req.body.usuarioId;
+    db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, DT_EXCLUSAO, ID_USUARIO) VALUES (?, ?, ?, ?)", [treino, treinoObs, null, usuarioId],
                     (err, result) => {
                         if (err) {
                             res.send(err);
@@ -19,8 +12,6 @@ const treinoRegister = (req, res) => {
                             res.send({ msg: 'Treino adicionado com sucesso!' });
                         }
                     })
-            }
-        })
 }
 
 const treinoSelect = (req, res) => {
