@@ -41,17 +41,34 @@ const exerciciosRegisterMidia = (req, res) => {
         })
 }
 
+const exercicioTreinoRegister = (req, res) => {
+    const OBS_EXERCICIO_TREINO = req.body.OBS_EXERCICIO_TREINO;
+    const ID_TREINO = req.body.ID_TREINO;
+    const ID_EXERCICIO = req.body.ID_EXERCICIO;
+
+    db.query("INSERT INTO tb_exercicios_treinos (OBS_EXERCICIO_TREINO, DT_EXCLUSAO, ID_TREINO, ID_EXERCICIO) VALUES ( ?, ?, ?, ?)",
+    [OBS_EXERCICIO_TREINO, null, ID_TREINO, ID_EXERCICIO],
+    (err, response) => {
+        if(err){
+            res.send(err);
+        } else{
+            res.send({err, msg:"Cadastrado com sucesso!"});
+        }
+    })
+}
+
 const exercicioTreinoSelect = (req, res) => {
     //Busca na base todos os exercicios_treino selecionados
-    db.query("SELECT * FROM tb_exercicios_treinos", (err, result) => {
+    db.query("SELECT * FROM tb_exercicios_treinos wHERE DT_EXCLUSAO IS NULL", (err, result) => {
         if (err) {
             res.send(err);
         } else {
             //Retorna tudo que contém na base
-            res.send({ data: result })
+            res.send(result);
         }
     })
 }
+
 
     
 
@@ -59,7 +76,9 @@ const exercicioSelect = (req, res) => {
     //Busca na base todos os exercicios selecionados
     db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " + 
         "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " + 
-        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO ", (err, result) => {
+        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
+        "WHERE EXE.DT_EXCLUSAO IS NULL " +
+        "AND TEXE.DT_EXCLUSAO IS NULL", (err, result) => {
         if (err) {
             res.send(err);
         } else {
@@ -107,16 +126,16 @@ const exercicioUpdate = (req, res) => {
     const idMidiaExercicio = req.body.ID_MIDIA_EXERCICIO;
     const descricaoMidiaURL = null;
     const exercicioTipo = req.body.exercicioTipo;
-    const tiposExercicio = {
-        aerobica: 5,
-        funcional: 15,
-        pilates: 25
-    }
+    // const tiposExercicio = {
+    //     aerobica: 5,
+    //     funcional: 15,
+    //     pilates: 25
+    // }
 
-    const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
+    // const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
     return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
-    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, idTipoExercicio, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
         (err, result) => {
             if(err) {
                 res.send({ err, msg: 'Tente novamente!' });
@@ -160,4 +179,4 @@ const exercicioDelete = (req, res) => {
     )
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, selectTipoExercicio, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioTreinoRegister, exercicioSelect, selectTipoExercicio, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }
