@@ -41,6 +41,22 @@ const exerciciosRegisterMidia = (req, res) => {
         })
 }
 
+const exercicioTreinoRegister = (req, res) => {
+    const OBS_EXERCICIO_TREINO = req.body.OBS_EXERCICIO_TREINO;
+    const ID_TREINO = req.body.ID_TREINO;
+    const ID_EXERCICIO = req.body.ID_EXERCICIO;
+
+    db.query("INSERT INTO tb_exercicios_treinos (OBS_EXERCICIO_TREINO, DT_EXCLUSAO, ID_TREINO, ID_EXERCICIO) VALUES ( ?, ?, ?, ?)",
+    [OBS_EXERCICIO_TREINO, null, ID_TREINO, ID_EXERCICIO],
+    (err, response) => {
+        if(err){
+            res.send(err);
+        } else{
+            res.send({err, msg:"Cadastrado com sucesso!"});
+        }
+    })
+}
+
 const exercicioTreinoSelect = (req, res) => {
     //Busca na base todos os exercicios_treino selecionados
     db.query("SELECT * FROM tb_exercicios_treinos wHERE DT_EXCLUSAO IS NULL", (err, result) => {
@@ -48,10 +64,11 @@ const exercicioTreinoSelect = (req, res) => {
             res.send(err);
         } else {
             //Retorna tudo que contém na base
-            res.send({ data: result })
+            res.send(result);
         }
     })
 }
+
 
     
 
@@ -162,4 +179,4 @@ const exercicioDelete = (req, res) => {
     )
 }
 
-module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioSelect, selectTipoExercicio, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }
+module.exports = { exerciciosRegister, exercicioTreinoSelect, exercicioTreinoRegister, exercicioSelect, selectTipoExercicio, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete }

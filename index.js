@@ -19,7 +19,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino } = require('./src/controllers/treino.controller')
 const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
-const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
+const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercicioTreinoRegister, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
 const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller');
 const multer = require('multer');
 const multerConfig = require('./src/config/multer')
@@ -59,6 +59,8 @@ app.get("/exercicioEspecifico/:id", exercicioEspecifico);
 
 //Chamada para retornar todos os exercicios_treino de um usuário na base
 app.get("/exercicioTreinoSelect", exercicioTreinoSelect);
+
+app.post("/exercicioTreinoRegister", exercicioTreinoRegister);
 
 app.get("/selectTipoExercicio", selectTipoExercicio);
 
