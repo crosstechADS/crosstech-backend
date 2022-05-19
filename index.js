@@ -22,6 +22,8 @@ const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercici
 const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller');
 const multer = require('multer');
 const multerConfig = require('./src/config/multer')
+const AuthMiddleware = require('./src/middlewares/auth');
+const AuthProfessorMiddleware = require('./src/middlewares/professorMiddlewareProfile');
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
@@ -40,7 +42,7 @@ function verifyJWT(req, res, next) {
 }
 
 //função chamando todos os usuários que são alunos
-app.get("/alunosSelect", alunosSelect);
+app.get("/alunosSelect", AuthMiddleware, AuthProfessorMiddleware, alunosSelect);
 
 app.post("/resetSenha", resetSenha);
 
@@ -64,6 +66,8 @@ app.post("/exercicioTreinoRegister", exercicioTreinoRegister);
 app.get("/selectTipoExercicio", selectTipoExercicio);
 
 app.post("/treinoRegister", treinoRegister);
+
+app.post("/authenticate",)
 
 app.post("/register", usuariosRegister);
 
