@@ -59,7 +59,7 @@ app.get("/exercicioSelect", exercicioSelect);
 app.get("/exercicioEspecifico/:id", exercicioEspecifico);
 
 //Chamada para retornar todos os exercicios_treino de um usuário na base
-app.get("/exercicioTreinoSelect", exercicioTreinoSelect);
+app.get("/exercicioTreinoSelect/:id", exercicioTreinoSelect);
 
 app.post("/exercicioTreinoRegister", exercicioTreinoRegister);
 
