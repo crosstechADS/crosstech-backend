@@ -15,7 +15,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 
 
 // @controllers
-const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino } = require('./src/controllers/treino.controller')
+const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino, AlunoTreinoRegister } = require('./src/controllers/treino.controller')
 const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
 const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercicioTreinoRegister, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
@@ -46,6 +46,8 @@ function verifyJWT(req, res, next) {
 
 //função chamando todos os usuários que são alunos
 app.get("/alunosSelect", AuthMiddleware, AuthProfessorMiddleware, alunosSelect);
+
+app.post("/AlunoTreinoRegister", AuthMiddleware, AuthAlunoMiddleware, AlunoTreinoRegister);
 
 app.post("/resetSenha", resetSenha);
 

@@ -5,13 +5,13 @@ const treinoRegister = (req, res) => {
     const treinoObs = req.body.treinoObs;
     const usuarioId = req.body.usuarioId;
     db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, DT_EXCLUSAO, ID_USUARIO) VALUES (?, ?, ?, ?)", [treino, treinoObs, null, usuarioId],
-                    (err, result) => {
-                        if (err) {
-                            res.send(err);
-                        } else {
-                            res.send({ msg: 'Treino adicionado com sucesso!' });
-                        }
-                    })
+        (err, result) => {
+            if (err) {
+                res.send(err);
+            } else {
+                res.send({ msg: 'Treino adicionado com sucesso!' });
+            }
+        })
 }
 
 const treinoSelect = (req, res) => {
@@ -37,18 +37,18 @@ const treinoSelect = (req, res) => {
     })
 }
 
-const treinosSelect = (req,res) => {
+const treinosSelect = (req, res) => {
     db.query(
         "SELECT TRE.*, USU.* FROM TB_TREINOS TRE " +
         "INNER JOIN TB_USUARIOS USU " +
         "ON TRE.ID_USUARIO = USU.ID_USUARIO " +
         "WHERE TRE.DT_EXCLUSAO IS NULL ", (err, result) => {
-        if(err) {
-            res.send(err);
-        }else{
-            res.send(result);
-        }
-    })
+            if (err) {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+        })
 }
 
 const treinoEspecifico = (req, res) => {
@@ -59,12 +59,12 @@ const treinoEspecifico = (req, res) => {
         "ON TRE.ID_USUARIO = USU.ID_USUARIO " +
         "WHERE TRE.DT_EXCLUSAO IS NULL AND " +
         "TRE.ID_TREINO = ?", [id], (err, result) => {
-        if(err) {
-            res.send(err);
-        }else{
-            res.send(result);
-        }
-    })
+            if (err) {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+        })
 }
 
 const updateTreino = (req, res) => {
@@ -77,12 +77,12 @@ const updateTreino = (req, res) => {
     const idUsuario = req.body.ID_USUARIO;
 
     db.query("UPDATE TB_TREINOS SET DS_TREINO = ?, OBS_TREINO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_USUARIO = ? WHERE ID_TREINO = ?",
-    [dsTreino, obsTreino, dtInclusao, dtExclusao, idUsuario, idTreino],
+        [dsTreino, obsTreino, dtInclusao, dtExclusao, idUsuario, idTreino],
         (err, result) => {
-            if(err) {
+            if (err) {
                 res.send({ err, msg: 'Tente novamente!' });
             } else {
-                return res.send({ msg: 'Atualizado com sucesso!'});
+                return res.send({ msg: 'Atualizado com sucesso!' });
             }
         }
     )
@@ -102,15 +102,31 @@ const deleteTreino = (req, res) => {
     const idUsuario = req.body.ID_USUARIO;
 
     db.query("UPDATE TB_TREINOS SET DS_TREINO = ?, OBS_TREINO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_USUARIO = ? WHERE ID_TREINO = ?",
-    [dsTreino, obsTreino, dtInclusao, dtExclusao, idUsuario, idTreino],
+        [dsTreino, obsTreino, dtInclusao, dtExclusao, idUsuario, idTreino],
         (err, result) => {
-            if(err) {
+            if (err) {
                 res.send({ err, msg: 'Tente novamente!' });
             } else {
-                return res.send({ msg: 'Deletado com sucesso!'});
+                return res.send({ msg: 'Deletado com sucesso!' });
             }
         }
     )
 }
 
-module.exports = { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino }
+const AlunoTreinoRegister = (req, res) => {
+    const nrRepeticoes = req.body.NR_REPETICAO;
+    const kgExercicio = req.body.KG_EXERCICIO;
+    const idExercicioTreino = req.body.ID_EXERCICIO_TREINO;
+    const minutosExercicio = req.body.MINUTOS_EXERCICIO;
+
+    db.query("INSERT INTO tb_exercicio_treino_aluno (NR_REPETICAO, KG_EXERCICIO, MINUTOS_EXERCICIO, ID_EXERCICIO_TREINO) VALUES (?, ?, ?, ?)", [nrRepeticoes, kgExercicio, minutosExercicio, idExercicioTreino, null],
+        (err, result) => {
+            if (err) {
+                res.send({ msg: 'Erro na realização do exercício' });
+            } else {
+                res.send({ msg: 'Exercício finalizado com sucesso!' });
+            }
+        })
+}
+
+module.exports = { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino, AlunoTreinoRegister }
