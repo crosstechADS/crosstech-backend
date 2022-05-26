@@ -122,9 +122,9 @@ const AlunoTreinoRegister = (req, res) => {
     db.query("INSERT INTO tb_exercicio_treino_aluno (NR_REPETICAO, KG_EXERCICIO, MINUTOS_EXERCICIO, ID_EXERCICIO_TREINO) VALUES (?, ?, ?, ?)", [nrRepeticoes, kgExercicio, minutosExercicio, idExercicioTreino, null],
         (err, result) => {
             if (err) {
-                res.send({ msg: 'Erro na realização do exercício' });
+                res.send({ msg: "Erro na realização do exercício" });
             } else {
-                res.send({ msg: 'Exercício finalizado com sucesso!' });
+                res.send({ msg: "Exercício finalizado com sucesso!" });
             }
         })
 }
