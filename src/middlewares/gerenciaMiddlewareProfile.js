@@ -6,6 +6,6 @@ module.exports = (req, res, next) => {
         return next()
     }
 
-    return res.status(401).send({ error: 'Rota exclusiva para professores' });
+    return res.status(401).send({ error: 'Rota exclusiva para gerência' });
 
 }

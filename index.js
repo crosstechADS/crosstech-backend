@@ -24,6 +24,7 @@ const multer = require('multer');
 const multerConfig = require('./src/config/multer')
 const AuthMiddleware = require('./src/middlewares/auth');
 const AuthProfessorMiddleware = require('./src/middlewares/professorMiddlewareProfile');
+const AuthGerenciaMiddleware = require('./src/middlewares/gerenciaMiddlewareProfile');
 
 //Nessa função estamos criando a verificação do token recebido.
 function verifyJWT(req, res, next) {
