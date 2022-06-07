@@ -15,7 +15,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 
 
 // @controllers
-const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino, AlunoTreinoRegister } = require('./src/controllers/treino.controller')
+const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino, AlunoTreinoRegister, selectAlunoTreinoRegister } = require('./src/controllers/treino.controller')
 const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
 const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercicioTreinoRegister, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
@@ -98,6 +98,8 @@ app.post("/exercicioDelete", exercicioDelete);
 app.post("/updateTreino", updateTreino);
 
 app.post("/deleteTreino", deleteTreino);
+
+app.get("/selectTreinoAluno", selectAlunoTreinoRegister);
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
