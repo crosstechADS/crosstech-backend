@@ -86,7 +86,7 @@ const usuariosRegister = (req, res) => {
 
 const alunosSelect = (req, res) => {
     //busca de todos os dados de usuários alunos
-    db.query("SELECT USU.* FROM TB_USUARIOS USU " + 
+    db.query("SELECT USU.DS_NOME, DAD.DS_CPF FROM TB_USUARIOS USU " + 
     "INNER JOIN TB_GRUPOS_USUARIOS GRU " + 
     "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
     "INNER JOIN TB_DADOS_USUARIOS DAD " +
