@@ -103,6 +103,26 @@ const alunosSelect = (req, res) => {
     })
 }
 
+const alunoEspecifico = (req, res) => {
+  const id = req.params.id;
+  //Busca na base o aluno selecionados
+  db.query("SELECT USU.*, DAD.* FROM TB_USUARIOS USU " + 
+    "INNER JOIN TB_GRUPOS_USUARIOS GRU " + 
+    "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
+    "INNER JOIN TB_DADOS_USUARIOS DAD " + 
+    "ON USU.ID_USUARIO = DAD.ID_USUARIO " +
+    "WHERE USU.ID_USUARIO = ? AND "+
+    "USU.ID_ALUNO = GRU.ID_ALUNO",[id], (err, result) => {
+      if (err) {
+          res.send(err);
+      } else {
+          //Retorna tudo que contém na base
+          res.send(result)
+
+      }
+  })
+}
+
 const resetSenha = (req, res) => {
     const email = req.body.email
     const password = req.body.password
