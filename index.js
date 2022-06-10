@@ -99,7 +99,7 @@ app.post("/updateTreino", updateTreino);
 
 app.post("/deleteTreino", deleteTreino);
 
-app.get("/selectTreinoAluno", selectAlunoTreinoRegister);
+app.post("/selectTreinoAluno", selectAlunoTreinoRegister);
 
 app.listen(process.env.PORT, () => {
     console.log("Rodando na porta 3001.")
