@@ -137,11 +137,11 @@ const selectAlunoTreinoRegister = (req, res) => {
             return res.send({err, msg: "Erro ao consultar usuário pelo email!"});
         } else {
             var idUsuario = result[0].ID_USUARIO;
-            db.query("SELECT trealu.*, exe.DS_EXERCICIO FROM TB_EXERCICIO_TREINO_ALUNO trealu INNER JOIN TB_EXERCICIOS_TREINOS exetre ON trealu.ID_EXERCICIO_TREINO = exetre.ID_EXERCICIO_TREINO INNER JOIN TB_EXERCICIOS exe ON exe.ID_EXERCICIO = exetre.ID_EXERCICIO INNER JOIN TB_TREINOS tre ON tre.ID_TREINO = exetre.ID_TREINO WHERE tre.ID_USUARIO = ?", [idUsuario], (err, result) => {
+            db.query("SELECT trealu.ID_TREINO_ALUNO as Id, trealu.NR_REPETICAO as Repetições, trealu.KG_EXERCICIO as Pesagem, trealu.MINUTOS_EXERCICIO as Tempo, DATE_FORMAT(trealu.DT_REALIZACAO, '%e %b %Y') as Data, exe.DS_EXERCICIO as Exercício FROM TB_EXERCICIO_TREINO_ALUNO trealu INNER JOIN TB_EXERCICIOS_TREINOS exetre ON trealu.ID_EXERCICIO_TREINO = exetre.ID_EXERCICIO_TREINO INNER JOIN TB_EXERCICIOS exe ON exe.ID_EXERCICIO = exetre.ID_EXERCICIO INNER JOIN TB_TREINOS tre ON tre.ID_TREINO = exetre.ID_TREINO WHERE tre.ID_USUARIO = ?", [idUsuario], (err, result) => {
                 if(err) {
                     return res.send({err, msg: "Erro ao consultar as informações pelo idUsuario!"});
                 } else {
-                    return res.send({result, msg: "Consulta realizada com sucesso!"});
+                    return res.send(result);
                 }
             })
         }
