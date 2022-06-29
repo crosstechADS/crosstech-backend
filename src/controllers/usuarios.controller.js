@@ -1,33 +1,34 @@
-const { db } = require('../config/database')
+const { db } = require('../config/database');
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const usuariosRegister = (req, res) => {
 
     const {
-        nome, email, password, profile,
+        nome, email, password, idProfile,
         rua, cpf, numeroLogradouro, bairro,
         dataNascimento, cep, cidade, uf
     } = req.body;
 
     var id;
-    var idProfile;
+    var profile;
+    // var idProfile;
 
-    if (profile.toLowerCase() === 'gerente' || profile.toLowerCase() === 'gerencia') {
-        idProfile = 5;
-    }
+    // if (profile.toLowerCase() === 'gerente' || profile.toLowerCase() === 'gerencia') {
+    //     idProfile = 5;
+    // }
 
-    if (profile.toLowerCase() === 'aluno' || profile.toLowerCase === 'aluna') {
-        idProfile = 15;
-    }
+    // if (profile.toLowerCase() === 'aluno' || profile.toLowerCase === 'aluna') {
+    //     idProfile = 15;
+    // }
 
-    if (profile.toLowerCase() === 'professor' || profile.toLowerCase() === 'professora') {
-        idProfile = 25;
-    }
+    // if (profile.toLowerCase() === 'professor' || profile.toLowerCase() === 'professora') {
+    //     idProfile = 25;
+    // }
 
-    if (profile.toLowerCase() === 'recepcionista') {
-        idProfile = 35;
-    }
+    // if (profile.toLowerCase() === 'recepcionista') {
+    //     idProfile = 35;
+    // }
 
     return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         async (err, result) => {
@@ -65,10 +66,20 @@ const usuariosRegister = (req, res) => {
                                                                 return res.send(err);
                                                             }
                                                             else {
-                                                                db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), ?, ?)",
-                                                                    [nome, profile, id, idProfile], (err) => {
-                                                                        return res.status(err ? 500 : 200).send({ msg: err ? err.message : "Cadastrado com sucesso!" })
+                                                                db.query("SELECT DS_TIPO_PERFIL FROM TB_TIPO_PERFIL WHERE ID_TIPO_PERFIL = ? ", [idProfile],
+                                                                    (err, result) => {
+                                                                        if (err) {
+                                                                            return res.send(err);
+                                                                        } else {
+                                                                            profile = result[0].DS_TIPO_PERFIL;
+
+                                                                            db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), ?, ?)",
+                                                                                [nome, profile, id, idProfile], (err) => {
+                                                                                    return res.status(err ? 500 : 200).send({ msg: err ? err.message : "Cadastrado com sucesso!" })
+                                                                                })
+                                                                        }
                                                                     })
+
                                                             }
                                                         })
                                                 }
@@ -84,43 +95,59 @@ const usuariosRegister = (req, res) => {
         });
 };
 
+const tipoPerfilSelect = (req, res) => {
+    db.query("SELECT " +
+        "ID_TIPO_PERFIL, " +
+        "DS_TIPO_PERFIL, " +
+        "OBS_TIPO_PERFIL " +
+        "FROM TB_TIPO_PERFIL " +
+        "WHERE DT_EXCLUSAO IS NULL",
+        (err, result) => {
+            if (err) {
+                return res.send(err);
+            } else {
+                return res.send(result);
+            }
+        });
+}
+
 const alunosSelect = (req, res) => {
     //busca de todos os dados de usuários alunos
-    db.query("SELECT USU.DS_NOME, DAD.DS_CPF FROM TB_USUARIOS USU " + 
-    "INNER JOIN TB_GRUPOS_USUARIOS GRU " + 
-    "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
-    "INNER JOIN TB_DADOS_USUARIOS DAD " +
-    "ON USU.ID_USUARIO = DAD.ID_USUARIO " +
-    "WHERE GRU.ID_TIPO_PERFIL = 15 " +
-    "AND USU.DT_EXCLUSAO IS NULL " +
-    "AND GRU.DT_EXCLUSAO IS NULL", 
-    (err, result) => {
-        if(err){
-            res.send(err);
-        }else {
-            res.send(result);
-        }
-    })
+    db.query("SELECT USU.DS_NOME, DAD.DS_CPF FROM TB_USUARIOS USU " +
+        "INNER JOIN TB_GRUPOS_USUARIOS GRU " +
+        "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
+        "INNER JOIN TB_DADOS_USUARIOS DAD " +
+        "ON USU.ID_USUARIO = DAD.ID_USUARIO " +
+        "WHERE GRU.ID_TIPO_PERFIL = 15 " +
+        "AND USU.DT_EXCLUSAO IS NULL " +
+        "AND GRU.DT_EXCLUSAO IS NULL",
+        (err, result) => {
+            if (err) {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+        })
 }
 
 const alunoEspecifico = (req, res) => {
-  const id = req.params.id;
-  //Busca na base o aluno selecionados
-  db.query("SELECT USU.*, DAD.* FROM TB_USUARIOS USU " + 
-    "INNER JOIN TB_GRUPOS_USUARIOS GRU " + 
-    "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
-    "INNER JOIN TB_DADOS_USUARIOS DAD " + 
-    "ON USU.ID_USUARIO = DAD.ID_USUARIO " +
-    "WHERE USU.ID_USUARIO = ? AND "+
-    "USU.ID_ALUNO = GRU.ID_ALUNO",[id], (err, result) => {
-      if (err) {
-          res.send(err);
-      } else {
-          //Retorna tudo que contém na base
-          res.send(result)
+    const id = req.params.id;
+    //Busca na base o aluno selecionados
+    db.query("SELECT USU.*, DAD.* FROM TB_USUARIOS USU " +
+        "INNER JOIN TB_GRUPOS_USUARIOS GRU " +
+        "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
+        "INNER JOIN TB_DADOS_USUARIOS DAD " +
+        "ON USU.ID_USUARIO = DAD.ID_USUARIO " +
+        "WHERE USU.ID_USUARIO = ? AND " +
+        "USU.ID_ALUNO = GRU.ID_ALUNO", [id], (err, result) => {
+            if (err) {
+                res.send(err);
+            } else {
+                //Retorna tudo que contém na base
+                res.send(result)
 
-      }
-  })
+            }
+        })
 }
 
 const resetSenha = (req, res) => {
@@ -154,4 +181,4 @@ const resetSenha = (req, res) => {
         })
 }
 
-module.exports = { usuariosRegister, resetSenha, alunosSelect }
+module.exports = { usuariosRegister, resetSenha, alunosSelect, tipoPerfilSelect }

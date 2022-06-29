@@ -16,7 +16,7 @@ app.use('/files', express.static(path.resolve(__dirname, "..", "tmp", "uploads")
 
 // @controllers
 const { treinoRegister, treinoSelect, treinosSelect, treinoEspecifico, updateTreino, deleteTreino, AlunoTreinoRegister, selectAlunoTreinoRegister } = require('./src/controllers/treino.controller')
-const { usuariosRegister, alunosSelect, resetSenha } = require('./src/controllers/usuarios.controller')
+const { usuariosRegister, alunosSelect, resetSenha, tipoPerfilSelect } = require('./src/controllers/usuarios.controller')
 const { login, logout } = require('./src/controllers/login.controller')
 const { exerciciosRegister, selectTipoExercicio, exercicioTreinoSelect, exercicioTreinoRegister, exercicioSelect, exercicioEspecifico, exerciciosRegisterMidia, exercicioUpdate, exercicioDelete } = require('./src/controllers/exercicios.controller')
 const { calculoIMC } = require('./src/controllers/avaliacaoFisica.controller');
@@ -48,6 +48,9 @@ function verifyJWT(req, res, next) {
 app.get("/alunosSelect", AuthMiddleware, AuthProfessorMiddleware, alunosSelect);
 
 app.post("/AlunoTreinoRegister", AuthMiddleware, AuthAlunoMiddleware, AlunoTreinoRegister);
+
+//função chama os tipos de perfil que estão cadastrados
+app.get("/tipoPerfilSelect", tipoPerfilSelect);
 
 app.post("/resetSenha", resetSenha);
 
