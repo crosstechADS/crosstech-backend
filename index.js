@@ -45,7 +45,7 @@ function verifyJWT(req, res, next) {
 }
 
 //função chamando todos os usuários que são alunos
-app.get("/alunosSelect", AuthMiddleware, AuthProfessorMiddleware, alunosSelect);
+app.get("/alunosSelect", AuthMiddleware, alunosSelect);
 
 app.post("/AlunoTreinoRegister", AuthMiddleware, AuthAlunoMiddleware, AlunoTreinoRegister);
 
