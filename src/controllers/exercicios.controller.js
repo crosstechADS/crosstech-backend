@@ -18,7 +18,7 @@ const exerciciosRegister = (req, res) => {
         [exercicio, exercicioObs, null, exercicioTipo, 5],
         (err, response) => {
             if (err) {
-                res.status(401).send({ err })
+                return res.send({ err, msg: "Ocorreu um erro ao cadastrar exercício!" })
             }
             else {
                 console.log('response:', response)
@@ -47,78 +47,78 @@ const exercicioTreinoRegister = (req, res) => {
     const ID_EXERCICIO = req.body.ID_EXERCICIO;
 
     db.query("INSERT INTO tb_exercicios_treinos (OBS_EXERCICIO_TREINO, DT_EXCLUSAO, ID_TREINO, ID_EXERCICIO) VALUES ( ?, ?, ?, ?)",
-    [OBS_EXERCICIO_TREINO, null, ID_TREINO, ID_EXERCICIO],
-    (err, response) => {
-        if(err){
-            res.send(err);
-        } else{
-            res.send({err, msg:"Cadastrado com sucesso!"});
-        }
-    })
+        [OBS_EXERCICIO_TREINO, null, ID_TREINO, ID_EXERCICIO],
+        (err, response) => {
+            if (err) {
+                return res.send({ err, msg: "Ocorreu um erro!" });
+            } else {
+                res.send({ err, msg: "Cadastrado com sucesso!" });
+            }
+        })
 }
 
 const exercicioTreinoSelect = (req, res) => {
     const id = req.params.id;
     //Busca na base todos os exercicios_treino selecionados
     db.query("SELECT EXETRE.*, EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS_TREINOS EXETRE " +
-    "INNER JOIN TB_EXERCICIOS EXE " +
-    "ON EXETRE.ID_EXERCICIO = EXE.ID_EXERCICIO " +
-    "INNER JOIN TB_TREINOS TRE " +
-    "ON EXETRE.ID_TREINO = TRE.ID_TREINO " +
-    "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " +
-    "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
-    "WHERE EXETRE.ID_TREINO = ? " + 
-    "AND EXETRE.DT_EXCLUSAO IS NULL ", [id], (err, result) => {
-        if (err) {
-            res.send(err);
-        } else {
-            //Retorna tudo que contém na base
-            res.send(result);
-        }
-    })
+        "INNER JOIN TB_EXERCICIOS EXE " +
+        "ON EXETRE.ID_EXERCICIO = EXE.ID_EXERCICIO " +
+        "INNER JOIN TB_TREINOS TRE " +
+        "ON EXETRE.ID_TREINO = TRE.ID_TREINO " +
+        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " +
+        "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
+        "WHERE EXETRE.ID_TREINO = ? " +
+        "AND EXETRE.DT_EXCLUSAO IS NULL ", [id], (err, result) => {
+            if (err) {
+                res.send({ err, msg: "Ocorreu um erro!" });
+            } else {
+                //Retorna tudo que contém na base
+                res.send(result);
+            }
+        })
 }
 
 
-    
+
 
 const exercicioSelect = (req, res) => {
     //Busca na base todos os exercicios selecionados
-    db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " + 
-        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " + 
+    db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " +
+        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " +
         "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
         "WHERE EXE.DT_EXCLUSAO IS NULL " +
         "AND TEXE.DT_EXCLUSAO IS NULL", (err, result) => {
-        if (err) {
-            res.send(err);
-        } else {
-            //Retorna tudo que contém na base
-            res.send(result)
-        }
-    })
+            if (err) {
+                res.send({ err, msg: "Ocorreu um erro!" });
+            } else {
+                //Retorna tudo que contém na base
+                res.send(result)
+            }
+        })
 }
 
 const exercicioEspecifico = (req, res) => {
     const id = req.params.id;
     //Busca na base todos os exercicios selecionados
-    db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " + 
-        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " + 
+    db.query("SELECT EXE.*, TEXE.DS_TIPO_EXERCICIO FROM TB_EXERCICIOS EXE " +
+        "INNER JOIN TB_TIPOS_EXERCICIOS TEXE " +
         "ON EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO " +
-        "WHERE EXE.ID_EXERCICIO = ? AND "+
-        "EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO",[id], (err, result) => {
-        if (err) {
-            res.send(err);
-        } else {
-            //Retorna tudo que contém na base
-            res.send(result)
+        "WHERE EXE.ID_EXERCICIO = ? AND " +
+        "EXE.ID_TIPO_EXERCICIO = TEXE.ID_TIPO_EXERCICIO", [id], (err, result) => {
+            if (err) {
+                res.send({ err, msg: "Ocorreu um erro!" });
+            } else {
+                //Retorna tudo que contém na base
+                res.send(result)
 
-        }
-    })
+            }
+        })
 }
 
 const selectTipoExercicio = (req, res) => {
     db.query("SELECT ID_TIPO_EXERCICIO, DS_TIPO_EXERCICIO FROM TB_TIPOS_EXERCICIOS WHERE DT_EXCLUSAO IS NULL", (err, result) => {
         if (err) {
-            res.send(err);
+            res.send({ err, msg: "Ocorreu um erro!" });
         } else {
             res.send(result);
         }
@@ -143,10 +143,10 @@ const exercicioUpdate = (req, res) => {
 
     // const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
-    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
-    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?",
+        [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
         (err, result) => {
-            if(err) {
+            if (err) {
                 res.send({ err, msg: 'Tente novamente!' });
             } else {
                 return res.send({ msg: "Cadastrado com sucesso!", record: { id: res.insertId } });
@@ -176,10 +176,10 @@ const exercicioDelete = (req, res) => {
 
     // const idTipoExercicio = tiposExercicio[exercicioTipo.toString().toLowerCase()]
 
-    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?", 
-    [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
+    return db.query("UPDATE TB_EXERCICIOS SET DS_EXERCICIO = ?, OBS_EXERCICIO = ?, DT_INCLUSAO = ?, DT_EXCLUSAO = ?, ID_TIPO_EXERCICIO = ?, ID_MIDIA_EXERCICIO = ?, DS_MIDIA_URL = ? WHERE ID_EXERCICIO = ?",
+        [descricaoExercicio, observacaoExercicio, dataInclusao, dataExclusao, exercicioTipo, idMidiaExercicio, descricaoMidiaURL, idExercicio],
         (err, result) => {
-            if(err) {
+            if (err) {
                 res.send({ err, msg: 'Tente novamente!' });
             } else {
                 return res.send({ msg: "Deletado com sucesso!", record: { id: res.insertId } });

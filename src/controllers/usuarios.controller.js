@@ -30,10 +30,12 @@ const usuariosRegister = (req, res) => {
     //     idProfile = 35;
     // }
 
+
+
     return db.query("SELECT * FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
         async (err, result) => {
             if (err) {
-                return res.send(err);
+                return res.send({ err, msg: "Ocorreu um erro!" });
             }
 
             if (!result?.length) {
@@ -43,12 +45,12 @@ const usuariosRegister = (req, res) => {
                     [nome, email, hash],
                     (err) => {
                         if (err) {
-                            res.status(401).send(err)
+                            res.send({ err, msg: "Ocorreu um erro!" })
                         } else {
                             db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email],
                                 (err, result) => {
                                     if (err) {
-                                        res.send(err)
+                                        res.send({ err, msg: "Ocorreu um erro!" })
                                     }
                                     else {
                                         id = result[0].ID_USUARIO;
@@ -56,22 +58,22 @@ const usuariosRegister = (req, res) => {
                                         db.query("SELECT * FROM TB_DADOS_USUARIOS WHERE DS_CPF = ?", [cpf],
                                             (err, result) => {
                                                 if (err) {
-                                                    return res.send(err);
+                                                    return res.send({ err, msg: "Ocorreu um erro!" });
                                                 }
                                                 else {
-                                                    db.query("INSERT INTO TB_DADOS_USUARIOS (DS_RUA, DS_CPF, DS_NUMERO_LOGRADOURO, DS_BAIRRO, DT_NASCIMENTO, DS_CEP, DS_CIDADE, DS_UF, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                                        [rua, cpf, numeroLogradouro, bairro, dataNascimento, cep, cidade, uf, id],
-                                                        (err) => {
+                                                    db.query("SELECT DS_TIPO_PERFIL FROM TB_TIPO_PERFIL WHERE ID_TIPO_PERFIL = ? ", [idProfile],
+                                                        (err, result) => {
                                                             if (err) {
-                                                                return res.send(err);
-                                                            }
-                                                            else {
-                                                                db.query("SELECT DS_TIPO_PERFIL FROM TB_TIPO_PERFIL WHERE ID_TIPO_PERFIL = ? ", [idProfile],
-                                                                    (err, result) => {
+                                                                return res.send({ err, msg: "Ocorreu um erro!" });
+                                                            } else {
+                                                                profile = result[0].DS_TIPO_PERFIL;
+
+                                                                db.query("INSERT INTO TB_DADOS_USUARIOS (DS_RUA, DS_CPF, DS_NUMERO_LOGRADOURO, DS_BAIRRO, DT_NASCIMENTO, DS_CEP, DS_CIDADE, DS_UF, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                                                    [rua, cpf, numeroLogradouro, bairro, dataNascimento, cep, cidade, uf, id],
+                                                                    (err) => {
                                                                         if (err) {
-                                                                            return res.send(err);
+                                                                            return res.send({ err, msg: "Ocorreu um erro!" });
                                                                         } else {
-                                                                            profile = result[0].DS_TIPO_PERFIL;
 
                                                                             db.query("INSERT INTO TB_GRUPOS_USUARIOS (DS_GRUPO_USUARIO, ID_USUARIO, ID_TIPO_PERFIL) VALUES (concat(?, ' - ', ?), ?, ?)",
                                                                                 [nome, profile, id, idProfile], (err) => {
@@ -79,7 +81,6 @@ const usuariosRegister = (req, res) => {
                                                                                 })
                                                                         }
                                                                     })
-
                                                             }
                                                         })
                                                 }
@@ -104,7 +105,7 @@ const tipoPerfilSelect = (req, res) => {
         "WHERE DT_EXCLUSAO IS NULL",
         (err, result) => {
             if (err) {
-                return res.send(err);
+                return res.send({ err, msg: "Ocorreu um erro!" });
             } else {
                 return res.send(result);
             }
@@ -113,7 +114,7 @@ const tipoPerfilSelect = (req, res) => {
 
 const alunosSelect = (req, res) => {
     //busca de todos os dados de usuários alunos
-    db.query("SELECT USU.DS_NOME, DAD.DS_CPF FROM TB_USUARIOS USU " +
+    db.query("SELECT USU.ID_USUARIO, USU.DS_NOME, DAD.DS_CPF FROM TB_USUARIOS USU " +
         "INNER JOIN TB_GRUPOS_USUARIOS GRU " +
         "ON USU.ID_USUARIO = GRU.ID_USUARIO " +
         "INNER JOIN TB_DADOS_USUARIOS DAD " +
@@ -123,7 +124,7 @@ const alunosSelect = (req, res) => {
         "AND GRU.DT_EXCLUSAO IS NULL",
         (err, result) => {
             if (err) {
-                res.send(err);
+                res.send({ err, msg: "Ocorreu um erro!" });
             } else {
                 res.send(result);
             }
@@ -141,7 +142,7 @@ const alunoEspecifico = (req, res) => {
         "WHERE USU.ID_USUARIO = ? AND " +
         "USU.ID_ALUNO = GRU.ID_ALUNO", [id], (err, result) => {
             if (err) {
-                res.send(err);
+                res.send({ err, msg: "Ocorreu um erro!" });
             } else {
                 //Retorna tudo que contém na base
                 res.send(result)

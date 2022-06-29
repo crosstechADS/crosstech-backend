@@ -7,7 +7,7 @@ const treinoRegister = (req, res) => {
     db.query("INSERT INTO TB_TREINOS (DS_TREINO, OBS_TREINO, DT_EXCLUSAO, ID_USUARIO) VALUES (?, ?, ?, ?)", [treino, treinoObs, null, usuarioId],
         (err, result) => {
             if (err) {
-                return res.send(err);
+                return res.send({ err, msg: "Ocorreu um erro ao cadastrar treino!" });
             } else {
                 return res.send({ msg: 'Treino adicionado com sucesso!' });
             }
@@ -21,13 +21,13 @@ const treinoSelect = (req, res) => {
     //pega o ID do usuário
     db.query("SELECT ID_USUARIO FROM TB_USUARIOS WHERE DS_EMAIL = ?", [email], (err, result) => {
         if (err) {
-            res.send(err);
+            res.send({ err, msg: "Ocorreu um erro!" });
         } else {
             id = result[0].ID_USUARIO;
             //Busca na base todos os treinos vinculados ao id usuário fornecido
             db.query("SELECT * FROM TB_TREINOS WHERE ID_USUARIO = ? AND DT_EXCLUSAO IS NULL", [id], (err, result) => {
                 if (err) {
-                    return res.send(err);
+                    return res.send({ err, msg: "Ocorreu um erro ao buscar treinos!" });
                 } else {
                     //Retorna tudo que contém na base
                     return res.send(result);
@@ -44,7 +44,7 @@ const treinosSelect = (req, res) => {
         "ON TRE.ID_USUARIO = USU.ID_USUARIO " +
         "WHERE TRE.DT_EXCLUSAO IS NULL ", (err, result) => {
             if (err) {
-                return res.send(err);
+                return res.send({ err, msg: "Ocorreu um erro ao buscar treinos!" });
             } else {
                 return res.send(result);
             }
@@ -60,7 +60,7 @@ const treinoEspecifico = (req, res) => {
         "WHERE TRE.DT_EXCLUSAO IS NULL AND " +
         "TRE.ID_TREINO = ?", [id], (err, result) => {
             if (err) {
-                return res.send(err);
+                return res.send({ err, msg: "Ocorreu um erro ao buscar detalhes do treino!" });
             } else {
                 return res.send(result);
             }
@@ -133,13 +133,13 @@ const selectAlunoTreinoRegister = (req, res) => {
     const email = req.body.EMAIL;
 
     db.query("SELECT ID_USUARIO FROM tb_usuarios WHERE DS_EMAIL = ?", [email], (err, result) => {
-        if(err) {
-            return res.send({err, msg: "Erro ao consultar usuário pelo email!"});
+        if (err) {
+            return res.send({ err, msg: "Erro ao consultar usuário pelo email!" });
         } else {
             var idUsuario = result[0].ID_USUARIO;
             db.query("SELECT trealu.ID_TREINO_ALUNO as Id, trealu.NR_REPETICAO as Repetições, trealu.KG_EXERCICIO as Pesagem, trealu.MINUTOS_EXERCICIO as Tempo, DATE_FORMAT(trealu.DT_REALIZACAO, '%e %b %Y') as Data, exe.DS_EXERCICIO as Exercício FROM TB_EXERCICIO_TREINO_ALUNO trealu INNER JOIN TB_EXERCICIOS_TREINOS exetre ON trealu.ID_EXERCICIO_TREINO = exetre.ID_EXERCICIO_TREINO INNER JOIN TB_EXERCICIOS exe ON exe.ID_EXERCICIO = exetre.ID_EXERCICIO INNER JOIN TB_TREINOS tre ON tre.ID_TREINO = exetre.ID_TREINO WHERE tre.ID_USUARIO = ?", [idUsuario], (err, result) => {
-                if(err) {
-                    return res.send({err, msg: "Erro ao consultar as informações pelo idUsuario!"});
+                if (err) {
+                    return res.send({ err, msg: "Erro ao consultar as informações pelo idUsuario!" });
                 } else {
                     return res.send(result);
                 }

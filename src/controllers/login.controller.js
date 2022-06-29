@@ -11,7 +11,7 @@ const login = (req, res) => {
     db.query("SELECT usu.ID_USUARIO, perf.DS_TIPO_PERFIL FROM tb_usuarios usu INNER JOIN tb_grupos_usuarios gru ON gru.ID_USUARIO = usu.ID_USUARIO INNER JOIN heroku_56d9955fbec8988.tb_tipo_perfil perf on gru.ID_TIPO_PERFIL = perf.ID_TIPO_PERFIL WHERE usu.DS_EMAIL = ?", [email],
         (err, result) => {
             if (err) {
-                res.send(err)
+                res.send({ err, msg: "Ocorreu um erro ao buscar tipo de perfil!" })
             }
             if (result?.length) {
                 id = result[0].ID_USUARIO
@@ -24,7 +24,7 @@ const login = (req, res) => {
         (err, result) => {
             console.log(result)
             if (err) {
-                res.send(err)
+                res.send({ err, msg: "Ocorreu um erro ao consultar usuários!" })
             }
             if (result?.length) {
                 bcrypt.compare(password, result[0].DS_SENHA,
