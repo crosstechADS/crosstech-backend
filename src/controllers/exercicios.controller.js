@@ -45,9 +45,12 @@ const exercicioTreinoRegister = (req, res) => {
     const OBS_EXERCICIO_TREINO = req.body.OBS_EXERCICIO_TREINO;
     const ID_TREINO = req.body.ID_TREINO;
     const ID_EXERCICIO = req.body.ID_EXERCICIO;
+    const NR_REPETICAO = req.body.NR_REPETICAO;
+    const KG_EXERCICIO = req.body.KG_EXERCICIO;
+    const MINUTOS_EXERCICIO = req.body.MINUTOS_EXERCICIO;
 
-    db.query("INSERT INTO tb_exercicios_treinos (OBS_EXERCICIO_TREINO, DT_EXCLUSAO, ID_TREINO, ID_EXERCICIO) VALUES ( ?, ?, ?, ?)",
-        [OBS_EXERCICIO_TREINO, null, ID_TREINO, ID_EXERCICIO],
+    db.query("INSERT INTO tb_exercicios_treinos (OBS_EXERCICIO_TREINO, DT_EXCLUSAO, ID_TREINO, ID_EXERCICIO, NR_REPETICAO, KG_EXERCICIO, MINUTOS_EXERCICIO) VALUES ( ?, ?, ?, ?, ?, ? ,?)",
+        [OBS_EXERCICIO_TREINO, null, ID_TREINO, ID_EXERCICIO, NR_REPETICAO, KG_EXERCICIO, MINUTOS_EXERCICIO],
         (err, response) => {
             if (err) {
                 return res.send({ err, msg: "Ocorreu um erro!" });
